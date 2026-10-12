@@ -1,0 +1,46 @@
+:root {
+  --bg-color: #f8f6f1;
+  --text-color: #171320;
+  --purple: #6d4dff;
+  --orange: #ff834e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  width: 100%;
+  min-height: 100%;
+}
+
+body {
+  min-width: 320px;
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: Pretendard, 'Noto Sans KR', sans-serif;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+.app-shell {
+  position: relative;
+  min-height: 100vh;
+}
