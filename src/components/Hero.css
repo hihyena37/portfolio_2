@@ -750,7 +750,7 @@
   position: relative;
   isolation: isolate;
   /* gallery-hold marks the still part of the drift; it shares the drift's play state. */
-  animation: gallery-drift 8s linear both, gallery-hold 3s linear;
+  animation: gallery-drift 7s linear both, gallery-hold 3s linear;
   will-change: transform, opacity;
 }
 
@@ -919,12 +919,32 @@
 }
 
 @keyframes gallery-drift {
-  0%, 37.5% { opacity: 1; transform: translateX(0); }
+  0%, 42.857143% { opacity: 1; transform: translateX(0); }
   100% { opacity: 0; transform: translateX(calc(-100% - var(--gallery-slide-gap))); }
 }
 
 @keyframes gallery-arrive {
-  0%, 37.5% { opacity: 0; transform: translateX(calc(100% + var(--gallery-slide-gap))); }
+  0%, 42.857143% { opacity: 0; transform: translateX(calc(100% + var(--gallery-slide-gap))); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@media (max-width: 767px) {
+  .gallery-slide:not(.gallery-slide--manual) {
+    animation: gallery-drift-mobile 5s linear both, gallery-hold 2s linear;
+  }
+
+  .gallery-slide--incoming:not(.gallery-slide--manual) {
+    animation: gallery-arrive-mobile 5s linear both;
+  }
+}
+
+@keyframes gallery-drift-mobile {
+  0%, 40% { opacity: 1; transform: translateX(0); }
+  100% { opacity: 0; transform: translateX(calc(-100% - var(--gallery-slide-gap))); }
+}
+
+@keyframes gallery-arrive-mobile {
+  0%, 40% { opacity: 0; transform: translateX(calc(100% + var(--gallery-slide-gap))); }
   100% { opacity: 1; transform: translateX(0); }
 }
 
@@ -1148,6 +1168,6 @@
   .mascot-mouth--open { animation: none; }
   .mascot-mouth--open { opacity: 0; }
   .gallery-ending { animation: none; }
-  .gallery-slide { animation: none; }
+  .gallery-hanging .gallery-slide { animation: none; }
   .gallery-slide--incoming { display: none; }
 }

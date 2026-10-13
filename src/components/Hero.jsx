@@ -662,14 +662,20 @@ const Hero = ({ entered, onBackToStart }) => {
           onPointerDown={(event) => {
             suppressClickRef.current = false
             if (!event.isPrimary || event.button !== 0 || event.target.closest('button') || transitionTarget !== null) return
-            swipeRef.current = { x: event.clientX, y: event.clientY }
+            swipeRef.current = {
+              x: event.clientX,
+              y: event.clientY,
+              target: event.target.closest('a') ?? event.currentTarget,
+            }
+            // Hold the artwork under the finger until the tap or swipe finishes.
+            setDragging(true)
           }}
           onPointerMove={(event) => {
             const start = swipeRef.current
             if (!start) return
-            if (Math.abs(event.clientX - start.x) > 8 && Math.abs(event.clientX - start.x) > Math.abs(event.clientY - start.y)) {
-              setDragging(true)
-              event.currentTarget.setPointerCapture(event.pointerId)
+            if (Math.abs(event.clientX - start.x) > 50 && Math.abs(event.clientX - start.x) > Math.abs(event.clientY - start.y) * 1.3) {
+              suppressClickRef.current = true
+              start.target.setPointerCapture(event.pointerId)
             }
           }}
           onPointerUp={(event) => {
@@ -684,7 +690,7 @@ const Hero = ({ entered, onBackToStart }) => {
               selectProject(activeProject + (dx < 0 ? 1 : -1))
             }
           }}
-          onPointerCancel={() => { swipeRef.current = null; setDragging(false) }}
+          onPointerCancel={() => { swipeRef.current = null; setDragging(false); suppressClickRef.current = true }}
           onLostPointerCapture={() => { swipeRef.current = null; setDragging(false) }}
           onDragStart={(event) => event.preventDefault()}
           onClickCapture={(event) => {
