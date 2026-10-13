@@ -10,7 +10,7 @@ const artist = {
   nameEn: 'SEONG HYENA',
   role: 'Web Publisher & Design',
   photo: 'hn1.png',
-  intro: null, // 한 줄 자기소개
+  intro: '끊임없이 생각하는 디자이너 & 퍼블리셔 성혜나입니다.', // 한 줄 자기소개
 }
 
 // 아이콘 파일은 public 폴더에 있으며, 파일명 대소문자를 그대로 맞춰야 합니다.
@@ -52,6 +52,15 @@ const records = [
     label: '자격증',
     items: [
       { period: '2025.12', title: '웹디자인개발기능사 취득' },
+    ],
+  },
+  {
+    title: 'CAREER',
+    label: '경력',
+    items: [
+      { period: '2023.01 ~ 2023.12', title: '유앤아이미술학원', detail: '유아 미술교육' },
+      { period: '2024.02 ~ 2024.09', title: '수만휘스파르타학원', detail: '행정팀' },
+      { period: '2024.10 ~ 2026.04', title: '어린화가들', detail: '미술 전임교사' },
     ],
   },
 ]
