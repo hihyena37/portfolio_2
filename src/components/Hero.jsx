@@ -17,6 +17,8 @@ const Hero = ({ entered }) => {
   const doorRef = useRef(null)
   const doorLeftRef = useRef(null)
   const doorRightRef = useRef(null)
+  const galleryRef = useRef(null)
+  const frameRef = useRef(null)
 
 
   const leftTextRef = useRef(null)
@@ -75,7 +77,7 @@ const Hero = ({ entered }) => {
         scrollTrigger: {
           trigger: heroRef.current,
           start: 'top top',
-          end: '+=3200',
+          end: '+=4500',
           pin: true,
           scrub: 1,
           anticipatePin: 1,
@@ -240,7 +242,64 @@ const Hero = ({ entered }) => {
           },
           1.95
         )
-        .to({}, { duration: 0.25 })
+        // 문이 열린 후 전시실 전체 화면으로 전환
+        .to(
+          galleryRef.current,
+          {
+            autoAlpha: 1,
+            duration: 0.35,
+            ease: 'none',
+          },
+          2.55
+        )
+
+        // 액자가 천장에서 내려옴
+        .fromTo(
+          frameRef.current,
+          {
+            y: () => -window.innerHeight * 1.3,
+            rotation: -5,
+          },
+          {
+            y: 0,
+            rotation: 2,
+            duration: 0.75,
+            ease: 'back.out(1.4)',
+          },
+          2.85
+        )
+
+        // 내려온 뒤 작은 좌우 흔들림
+        .to(
+          frameRef.current,
+          {
+            rotation: -2,
+            duration: 0.16,
+            ease: 'sine.inOut',
+          },
+          3.6
+        )
+        .to(
+          frameRef.current,
+          {
+            rotation: 1,
+            duration: 0.14,
+            ease: 'sine.inOut',
+          },
+          3.76
+        )
+        .to(
+          frameRef.current,
+          {
+            rotation: 0,
+            duration: 0.2,
+            ease: 'sine.out',
+          },
+          3.9
+        )
+
+        // 작품을 감상할 수 있도록 잠시 유지
+        .to({}, { duration: 0.5 })
 
       ScrollTrigger.refresh()
     }
@@ -380,6 +439,63 @@ const Hero = ({ entered }) => {
           />
 
         </div>
+      </div>
+
+      {/* =========================
+    FIRST GALLERY
+========================= */}
+
+      <div className="gallery-scene" ref={galleryRef}>
+
+        <div className="gallery-scene__header">
+          <span>HYENA'S EXHIBITION</span>
+          <span>GALLERY 01 / WEB REDESIGN</span>
+        </div>
+
+        <div className="gallery-hanging" ref={frameRef}>
+
+          <div className="gallery-wires">
+            <span className="gallery-wire" />
+            <span className="gallery-wire" />
+          </div>
+
+          <div className="gallery-artwork">
+            <div className="gallery-artwork__mat">
+              <div className="gallery-artwork__preview">
+                <span className="gallery-artwork__category">
+                  WEB REDESIGN
+                </span>
+
+                <strong>YP FOODS</strong>
+
+                <span className="gallery-artwork__subtitle">
+                  영풍 웹사이트 리디자인
+                </span>
+
+                <span className="gallery-artwork__placeholder">
+                  PROJECT PREVIEW
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="gallery-caption">
+            <span className="gallery-caption__number">
+              EXHIBIT 001
+            </span>
+
+            <h2>YP FOODS</h2>
+
+            <p>Website Renewal · UI/UX · Publishing</p>
+          </div>
+
+        </div>
+
+        <div className="gallery-scene__footer">
+          <span>01 — 06</span>
+          <span>SCROLL TO EXPLORE ↓</span>
+        </div>
+
       </div>
 
       <div className="hero-scroll" ref={hintRef}>
