@@ -330,6 +330,8 @@
 }
 
 .gallery-artwork {
+  cursor: grab;
+  user-select: none;
   display: block;
   text-decoration: none;
   position: relative;
@@ -456,14 +458,14 @@
   filter: blur(8px);
 }
 
-/* Hovering the artwork dims the wall and brightens the spotlights. */
+/* Keep the artwork emphasized at rest, then deepen the lighting on hover. */
 .gallery-scene::before {
   content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
   background: radial-gradient(ellipse at 50% 45%, rgb(30 24 18 / 6%) 0%, rgb(30 24 18 / 26%) 70%);
-  opacity: 0;
+  opacity: 0.45;
   transition: opacity 500ms ease;
 }
 
@@ -496,7 +498,7 @@
 .gallery-spotlight__beam::after {
   clip-path: polygon(47% 0, 53% 0, 100% 100%, 0 100%);
   background: linear-gradient(180deg, rgb(255 250 232 / 90%), rgb(255 248 228 / 45%) 50%, transparent 90%);
-  opacity: 0;
+  opacity: 0.4;
   transition: opacity 500ms ease;
 }
 
@@ -762,8 +764,10 @@
 }
 
 .gallery-slide--manual {
-  animation: gallery-manual-out 1.2s ease-in-out both;
+  animation: gallery-manual-out var(--manual-duration, 1.2s) ease-in-out both;
 }
+
+.gallery-hanging--dragging .gallery-artwork { cursor: grabbing; }
 
 .gallery-slide--manual.gallery-slide--incoming {
   animation-name: gallery-manual-in;
@@ -840,14 +844,28 @@
   min-width: 0;
   min-height: 40px;
   padding: 6px 0;
-  border-bottom: 3px solid #ddd4c7;
-  font-size: 14px;
+  border-bottom: 4px solid #8b8176;
+  transition: border-color 180ms ease;
 }
 
 .gallery-navigation__positions button[aria-current='true'] {
-  border-color: #987044;
-  color: #987044;
-  font-weight: 800;
+  border-color: #7965b0;
+}
+
+.gallery-navigation__positions button:hover {
+  border-color: #b9afa3;
+}
+
+.gallery-navigation__positions button[aria-current='true']:hover {
+  border-color: #aa98d3;
+}
+
+.gallery-scene--spotlit .gallery-navigation__positions button:not([aria-current='true']) {
+  border-color: #d4cbc0;
+}
+
+.gallery-scene--spotlit .gallery-navigation__positions button:not([aria-current='true']):hover {
+  border-color: #eee7dd;
 }
 
 .gallery-navigation button:focus-visible {

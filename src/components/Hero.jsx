@@ -20,6 +20,8 @@ const Hero = ({ entered, onBackToStart }) => {
   const [aboutOpen, setAboutOpen] = useState(false)
   const [activeProject, setActiveProject] = useState(0)
   const [transitionTarget, setTransitionTarget] = useState(null)
+  const [transitionDestination, setTransitionDestination] = useState(null)
+  const [dragging, setDragging] = useState(false)
   const [exhibitionEnded, setExhibitionEnded] = useState(false)
   const endingTitleRef = useRef(null)
   const [galleryReady, setGalleryReady] = useState(false)
@@ -104,6 +106,7 @@ const Hero = ({ entered, onBackToStart }) => {
     const leaveOnScrollUp = () => {
       if (window.scrollY >= galleryScroll.end - 60) return
       setTransitionTarget(null)
+      setTransitionDestination(null)
       setExhibitionEnded(false)
       window.requestAnimationFrame(() => galleryRef.current?.querySelector('.gallery-artwork')?.focus({ preventScroll: true }))
     }
@@ -525,14 +528,29 @@ const Hero = ({ entered, onBackToStart }) => {
   }, [entered])
 
   const selectProject = (index) => {
-    if (!galleryReady || transitionTarget !== null || index < 0 || index >= galleryProjects.length || index === activeProject) return
+    if (!galleryReady || index < 0 || index >= galleryProjects.length) return
+    if (transitionTarget !== null) {
+      setTransitionDestination(index)
+      return
+    }
+    if (index === activeProject) return
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setActiveProject(index)
     } else {
-      setTransitionTarget(index)
+      setTransitionDestination(Math.abs(index - activeProject) > 1 ? index : null)
+      setTransitionTarget(activeProject + Math.sign(index - activeProject))
     }
     setArtworkHovered(false)
     setArtworkFocused(false)
+  }
+
+  const navigationIndex = transitionDestination ?? transitionTarget ?? activeProject
+  const moveProject = (direction) => {
+    if (direction > 0 && navigationIndex === galleryProjects.length - 1) {
+      if (transitionTarget === null) setExhibitionEnded(true)
+      return
+    }
+    selectProject(navigationIndex + direction)
   }
 
   return (
@@ -610,11 +628,7 @@ const Hero = ({ entered, onBackToStart }) => {
           if (exhibitionEnded) return
           if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
             event.preventDefault()
-            if (event.key === 'ArrowRight' && activeProject === galleryProjects.length - 1 && transitionTarget === null) {
-              setExhibitionEnded(true)
-              return
-            }
-            selectProject(activeProject + (event.key === 'ArrowRight' ? 1 : -1))
+            moveProject(event.key === 'ArrowRight' ? 1 : -1)
           }
         }}>
 
@@ -626,6 +640,7 @@ const Hero = ({ entered, onBackToStart }) => {
               onClick={() => setAboutOpen(true)}>ABOUT ↗</button>
             <button type="button" className="gallery-connect-button" onClick={() => {
               setTransitionTarget(null)
+              setTransitionDestination(null)
               setExhibitionEnded(true)
               window.requestAnimationFrame(() => {
                 const contact = galleryRef.current?.querySelector('#gallery-contact-title')
@@ -637,7 +652,7 @@ const Hero = ({ entered, onBackToStart }) => {
           </nav>
         </div>
 
-        <div className="gallery-hanging" ref={frameRef}
+        <div className={`gallery-hanging${dragging ? ' gallery-hanging--dragging' : ''}`} ref={frameRef}
           style={exhibitionEnded ? { display: 'none' } : undefined}
           // Only keyboard focus pauses the drift; the replay button's programmatic focus must not.
           onFocusCapture={(event) => setArtworkFocused(event.target.matches(':focus-visible'))}
@@ -646,11 +661,21 @@ const Hero = ({ entered, onBackToStart }) => {
           }}
           onPointerDown={(event) => {
             suppressClickRef.current = false
-            if (event.pointerType === 'touch') swipeRef.current = { x: event.clientX, y: event.clientY }
+            if (!event.isPrimary || event.button !== 0 || event.target.closest('button') || transitionTarget !== null) return
+            swipeRef.current = { x: event.clientX, y: event.clientY }
+          }}
+          onPointerMove={(event) => {
+            const start = swipeRef.current
+            if (!start) return
+            if (Math.abs(event.clientX - start.x) > 8 && Math.abs(event.clientX - start.x) > Math.abs(event.clientY - start.y)) {
+              setDragging(true)
+              event.currentTarget.setPointerCapture(event.pointerId)
+            }
           }}
           onPointerUp={(event) => {
             const start = swipeRef.current
             swipeRef.current = null
+            setDragging(false)
             if (!start) return
             const dx = event.clientX - start.x
             const dy = event.clientY - start.y
@@ -659,7 +684,9 @@ const Hero = ({ entered, onBackToStart }) => {
               selectProject(activeProject + (dx < 0 ? 1 : -1))
             }
           }}
-          onPointerCancel={() => { swipeRef.current = null }}
+          onPointerCancel={() => { swipeRef.current = null; setDragging(false) }}
+          onLostPointerCapture={() => { swipeRef.current = null; setDragging(false) }}
+          onDragStart={(event) => event.preventDefault()}
           onClickCapture={(event) => {
             if (suppressClickRef.current) {
               event.preventDefault()
@@ -677,7 +704,10 @@ const Hero = ({ entered, onBackToStart }) => {
             key={`${activeProject}-${transitionTarget}-${offset}`}
             inert={offset === 1}
             aria-hidden={offset === 1 ? true : undefined}
-            style={{ animationPlayState: !galleryReady || storyOpen || aboutOpen || (!manual && (autoPaused || artworkHovered || artworkFocused)) ? 'paused' : 'running' }}
+            style={{
+              animationPlayState: !galleryReady || storyOpen || aboutOpen || (!manual && (autoPaused || artworkHovered || artworkFocused || dragging)) ? 'paused' : 'running',
+              '--manual-duration': transitionDestination !== null ? '350ms' : '1.2s',
+            }}
             onAnimationStart={(event) => {
               if (offset === 0 && event.target === event.currentTarget && event.animationName === 'gallery-hold') setArtworkHolding(true)
             }}
@@ -687,12 +717,18 @@ const Hero = ({ entered, onBackToStart }) => {
                 return
               }
               if (offset === 0 && event.target === event.currentTarget) {
+                if (transitionTarget !== null && transitionDestination !== null && transitionTarget !== transitionDestination) {
+                  setActiveProject(transitionTarget)
+                  setTransitionTarget(transitionTarget + Math.sign(transitionDestination - transitionTarget))
+                  return
+                }
                 if (transitionTarget === null && activeProject === galleryProjects.length - 1) {
                   setExhibitionEnded(true)
                 } else {
                   setActiveProject((index) => transitionTarget ?? index + 1)
                 }
                 setTransitionTarget(null)
+                setTransitionDestination(null)
               }
             }}>
             <div className="gallery-lighting" aria-hidden="true">
@@ -767,17 +803,17 @@ const Hero = ({ entered, onBackToStart }) => {
         <nav className="gallery-scene__footer gallery-navigation" aria-label="작품 선택"
           style={exhibitionEnded ? { display: 'none' } : undefined}>
           <div className="gallery-navigation__row">
-            <button type="button" disabled={activeProject === 0} onClick={() => selectProject(activeProject - 1)} aria-label="이전 작품">←</button>
+            <button type="button" disabled={navigationIndex === 0} onClick={() => moveProject(-1)} aria-label="이전 작품">←</button>
             <span>{project.number} / {String(galleryProjects.length).padStart(2, '0')}</span>
-            <button type="button" disabled={transitionTarget !== null}
-              onClick={() => activeProject === galleryProjects.length - 1 ? setExhibitionEnded(true) : selectProject(activeProject + 1)}
+            <button type="button"
+              onClick={() => moveProject(1)}
               aria-label={activeProject === galleryProjects.length - 1 ? '전시 관람 마치기' : '다음 작품'}>→</button>
           </div>
           <div className="gallery-navigation__positions">
             {galleryProjects.map((item, index) => (
               <button key={item.number} type="button" aria-label={item.number + ' ' + item.name}
                 title={item.name} aria-current={index === activeProject ? 'true' : undefined}
-                onClick={() => selectProject(index)}>{item.number}</button>
+                onClick={() => selectProject(index)} />
             ))}
           </div>
           <span className="gallery-navigation__name">{project.name}</span>
@@ -814,6 +850,7 @@ const Hero = ({ entered, onBackToStart }) => {
               setGalleryReady(true)
               setActiveProject(0)
               setTransitionTarget(null)
+              setTransitionDestination(null)
               setArtworkHovered(false)
               setArtworkFocused(false)
               setArtworkHolding(false)
