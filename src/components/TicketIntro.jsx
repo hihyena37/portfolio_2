@@ -32,7 +32,7 @@ const TicketIntro = ({ setEntered }) => {
         duration: 2.2,
       })
 
-    gsap.to(shadowRef.current, {
+    const shadowTween = gsap.to(shadowRef.current, {
       scale: 0.88,
       opacity: 0.14,
       duration: 2.2,
@@ -45,6 +45,7 @@ const TicketIntro = ({ setEntered }) => {
 
     return () => {
       floatTl.kill()
+      shadowTween.kill()
     }
   }, [])
 

@@ -1,15 +1,14 @@
 import { useState } from "react"
 import Hero from './components/Hero'
-import TiketIntro from './components/TicketIntro'
-import './index.css'
+import TicketIntro from './components/TicketIntro'
 
 const App = () => {
-  let [entered, setEntered] = useState(false)
+  const [entered, setEntered] = useState(false)
 
   return (
     <div className="wrap">
       <Hero entered={entered} />
-      <TiketIntro setEntered={setEntered}/>
+      <TicketIntro setEntered={setEntered} />
     </div>
   )
 }

@@ -102,13 +102,6 @@
     inset 0 -8px 12px rgba(0, 0, 0, 0.08);
 }
 
-.ticket-star {
-  color: #6d4dff;
-  font-size: clamp(44px, 5vw, 60px);
-  line-height: 1;
-  filter: drop-shadow(0 5px 6px rgba(78, 53, 194, 0.18));
-}
-
 .ticket-body__content {
   flex: 1;
   min-width: 0;
@@ -268,12 +261,7 @@
     flex-direction: row;
   }
 
-  .stub-bars span {
-    width: 8px;
-    height: 18px;
-  }
-
-  .ticket-shadow {
+.ticket-shadow {
     width: 72vw;
     transform: translateY(210px);
   }

@@ -441,10 +441,6 @@ const Hero = ({ entered }) => {
         </div>
       </div>
 
-      {/* =========================
-    FIRST GALLERY
-========================= */}
-
       <div className="gallery-scene" ref={galleryRef}>
 
         <div className="gallery-scene__header">
@@ -454,7 +450,7 @@ const Hero = ({ entered }) => {
 
         <div className="gallery-hanging" ref={frameRef}>
 
-          <div className="gallery-wires">
+          <div className="gallery-wires" aria-hidden="true">
             <span className="gallery-wire" />
             <span className="gallery-wire" />
           </div>
@@ -492,7 +488,7 @@ const Hero = ({ entered }) => {
         </div>
 
         <div className="gallery-scene__footer">
-          <span>01 — 06</span>
+          <span>01 — 09</span>
           <span>SCROLL TO EXPLORE ↓</span>
         </div>
 

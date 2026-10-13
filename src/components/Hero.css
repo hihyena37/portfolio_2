@@ -1,88 +1,58 @@
-/* =========================
-   HERO
-========================= */
-
 .hero {
   position: relative;
   width: 100%;
   height: 100vh;
   height: 100dvh;
   min-height: 500px;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   overflow: hidden;
-
   background: #f8f6f1;
-
   opacity: 0;
   visibility: hidden;
   transform-origin: center center;
 }
 
-
-/* =========================
-   HEADER
-========================= */
-
 .hero-header {
   position: absolute;
   top: 0;
   left: 0;
-
   width: 100%;
   padding: 32px 5%;
-
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.12em;
-
   color: #25212b;
 }
-
-
-/* =========================
-   CONTENT
-========================= */
 
 .hero-content {
   width: 100%;
   padding: 0 5%;
-
   display: flex;
   flex-direction: column;
   align-items: center;
-
   text-align: center;
+  position: relative;
+  z-index: 2;
 }
 
 .hero-eyebrow {
   margin: 0 0 16px;
-
   font-size: clamp(32px, 5.5vw, 80px);
   line-height: 1.1;
   font-weight: 800;
   letter-spacing: -0.05em;
-
   color: #25212b;
 }
-
-
-/* =========================
-   TITLE
-========================= */
 
 .hero-title {
   width: 100%;
   color: #25212b;
-
   font-weight: 800;
   letter-spacing: -0.06em;
   line-height: 1.05;
@@ -92,9 +62,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
   gap: clamp(12px, 2vw, 32px);
-
   font-size: clamp(48px, 8vw, 128px);
   white-space: nowrap;
 }
@@ -103,21 +71,14 @@
   font-size: clamp(48px, 8vw, 128px);
 }
 
-
-/* =========================
-   MASCOT
-========================= */
-
 .hero-mascot {
   position: relative;
-
   width: clamp(60px, 9vw, 140px);
   aspect-ratio: 1;
-
   flex-shrink: 0;
-
   transform-origin: center center;
   will-change: transform;
+  z-index: 5;
 }
 
 .mascot-float {
@@ -130,47 +91,29 @@
   display: block;
   width: 100%;
   height: 100%;
-
   filter: drop-shadow(0 12px 12px rgba(220, 145, 65, 0.18));
 }
 
-
-/* =========================
-   DESCRIPTION
-========================= */
-
 .hero-desc {
   margin: 28px 0 0;
-
   font-size: clamp(14px, 1.5vw, 18px);
   font-weight: 400;
   line-height: 1.6;
-
   color: #77716d;
 }
-
-
-/* =========================
-   SCROLL
-========================= */
 
 .hero-scroll {
   position: absolute;
   bottom: 35px;
   left: 50%;
-
   transform: translateX(-50%);
-
   display: flex;
   flex-direction: column;
   align-items: center;
-
   gap: 12px;
-
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.16em;
-
   color: #77716d;
   white-space: nowrap;
 }
@@ -180,109 +123,27 @@
   font-weight: 400;
 }
 
-
-/* =========================
-   TABLET
-========================= */
-
-@media (max-width: 1024px) {
-
-  .hero-title-row,
-  .hero-title-bottom {
-    font-size: clamp(42px, 7.8vw, 80px);
-  }
-
-  .hero-mascot {
-    width: clamp(55px, 8vw, 95px);
-  }
-}
-
-
-/* =========================
-   MOBILE
-========================= */
-
-@media (max-width: 767px) {
-  .hero-header {
-    padding: 24px 20px;
-    font-size: 10px;
-  }
-
-  .hero-content {
-    padding: 0 16px;
-  }
-
-  .hero-eyebrow {
-    margin-bottom: 20px;
-    font-size: clamp(28px, 7vw, 48px);
-  }
-
-  .hero-title-row {
-    flex-wrap: wrap;
-    gap: 8px 12px;
-
-    font-size: clamp(30px, 8vw, 58px);
-  }
-
-  .hero-title-bottom {
-    font-size: clamp(30px, 8vw, 58px);
-  }
-
-  .hero-mascot {
-    width: clamp(42px, 12vw, 70px);
-  }
-
-  .hero-desc {
-    margin-top: 24px;
-    font-size: 13px;
-  }
-
-  .hero-scroll {
-    bottom: 28px;
-    font-size: 10px;
-  }
-}
-
-/* =========================
-   SCROLL ANIMATION
-========================= */
-
-.hero-content {
-  position: relative;
-  z-index: 2;
-}
-
-.hero-mascot {
-  z-index: 5;
-}
-
-
-/* =========================
-   EXHIBITION DOOR
-========================= */
-
 .hero-door {
+  --door-width: 220px;
   position: absolute;
-  left: 50%;
   bottom: 10vh;
-
-  transform: translateX(-50%);
-
-  width: 220px;
-  z-index: 1;
-
+  width: var(--door-width);
   opacity: 0;
   visibility: hidden;
+  left: 50%;
+  margin-left: calc(var(--door-width) / -2);
+  transform: none;
+  transform-origin: center center;
+  z-index: 10;
+  will-change: transform;
 }
 
 .hero-door__top {
   margin-bottom: 12px;
-
   text-align: center;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.2em;
-
   color: #6d4dff;
 }
 
@@ -290,86 +151,52 @@
   display: flex;
   width: 100%;
   height: 155px;
-
   border: 8px solid #d8cff0;
   border-bottom: none;
   border-radius: 10px 10px 0 0;
-
   overflow: hidden;
-
   background: #e9e3f5;
+  position: relative;
+  isolation: isolate;
 }
 
 .hero-door__left,
 .hero-door__right {
   width: 50%;
   height: 100%;
-
   background: #a58ae8;
   border: 1px solid rgba(255, 255, 255, 0.5);
+  position: relative;
+  z-index: 2;
+  flex: 0 0 50%;
+  will-change: transform;
 }
 
 .hero-door__left {
   border-right: 2px solid #7b5ccc;
+  background: linear-gradient(90deg,
+      #9476d7,
+      #b09aeb);
 }
 
 .hero-door__right {
   border-left: 2px solid #7b5ccc;
-}
-
-
-/* =========================
-   MOBILE
-========================= */
-
-@media (max-width: 767px) {
-  .hero-door {
-    width: 155px;
-    bottom: 12vh;
-  }
-
-  .hero-door__frame {
-    height: 115px;
-    border-width: 6px;
-  }
-
-  .hero-door__top {
-    font-size: 9px;
-  }
-}
-
-/* =========================
-   DOOR ZOOM & GALLERY
-========================= */
-
-.hero-door {
-  left: 50%;
-  margin-left: -110px;
-  transform: none;
-  transform-origin: center center;
-  z-index: 10;
-  will-change: transform;
-}
-
-.hero-door__frame {
-  position: relative;
-  isolation: isolate;
+  background: linear-gradient(90deg,
+      #b09aeb,
+      #9476d7);
 }
 
 .gallery-interior {
   position: absolute;
   inset: 0;
-
   z-index: 0;
   overflow: hidden;
-
   background: #f8f6f1;
 }
 
 .gallery-interior__wall {
   position: absolute;
   inset: 0;
-
   background:
     linear-gradient(180deg,
       #fffcf6 0%,
@@ -380,152 +207,82 @@
   position: absolute;
   top: 0;
   left: 50%;
-
   width: 65%;
   height: 80%;
-
   transform: translateX(-50%);
-
   background: radial-gradient(ellipse at top,
       rgba(255, 255, 255, 0.95),
       transparent 75%);
 }
 
-.hero-door__left,
-.hero-door__right {
-  position: relative;
-  z-index: 2;
-
-  flex: 0 0 50%;
-  will-change: transform;
-}
-
-.hero-door__left {
-  background: linear-gradient(90deg,
-      #9476d7,
-      #b09aeb);
-}
-
-.hero-door__right {
-  background: linear-gradient(90deg,
-      #b09aeb,
-      #9476d7);
-}
-
-/* =========================
-   MOBILE
-========================= */
-
-@media (max-width: 767px) {
-  .hero-door {
-    margin-left: -77.5px;
-  }
-}
-
-/* =========================
-   GALLERY SCENE
-========================= */
-
 .gallery-scene {
   position: absolute;
   inset: 0;
   z-index: 20;
-
   width: 100%;
   height: 100%;
-
   overflow: hidden;
-
   background:
     radial-gradient(ellipse at 50% 15%,
       #ffffff 0%,
       #f8f6f1 70%);
-
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
+  --gallery-header-height: 76px;
 }
-
-/* =========================
-   GALLERY HEADER
-========================= */
 
 .gallery-scene__header {
   position: absolute;
   top: 0;
   left: 0;
-
   width: 100%;
   padding: 30px 5%;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.12em;
-
   color: #39313d;
+  height: var(--gallery-header-height);
+  z-index: 1;
 }
-
-/* =========================
-   HANGING FRAME
-========================= */
 
 .gallery-hanging {
   position: relative;
-
-  width: min(66vw, 620px);
   margin: 0 auto;
-
   transform-origin: 50% 0;
   will-change: transform;
+  width: min(72vw, 960px);
+  padding-top: var(--gallery-header-height);
 }
-
-/* =========================
-   VERTICAL WIRES
-========================= */
 
 .gallery-wires {
   position: relative;
-
   width: 75%;
-  height: clamp(100px, 18vh, 180px);
-
+  height: clamp(24px, 5vh, 64px);
   margin: 0 auto;
-
   display: flex;
   justify-content: space-between;
 }
 
 .gallery-wire {
   display: block;
-
   width: 2px;
   height: 100%;
-
   background: linear-gradient(180deg,
       #b8b2ab,
       #827b75);
-
   box-shadow: 1px 0 2px rgba(0, 0, 0, 0.08);
 }
 
-/* =========================
-   ARTWORK FRAME
-========================= */
-
 .gallery-artwork {
   position: relative;
-
   width: 100%;
   padding: 12px;
-
   background: #b78d60;
-
   border: 3px solid #987044;
-
   box-shadow:
     0 20px 35px rgba(65, 47, 35, 0.15),
     inset 0 0 0 3px rgba(255, 255, 255, 0.25);
@@ -533,34 +290,26 @@
 
 .gallery-artwork__mat {
   padding: clamp(10px, 2vw, 22px);
-
   background: #fffdf8;
-
   box-shadow:
     inset 0 0 8px rgba(0, 0, 0, 0.08);
 }
 
 .gallery-artwork__preview {
   position: relative;
-
   width: 100%;
-  aspect-ratio: 16 / 9;
-
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-
   gap: 12px;
-
   overflow: hidden;
-
   background:
     linear-gradient(145deg,
       #dce6d8,
       #a1bf9a);
-
   color: #294a31;
+  aspect-ratio: 4 / 3;
 }
 
 .gallery-artwork__category {
@@ -583,16 +332,10 @@
   position: absolute;
   bottom: 15px;
   right: 18px;
-
   font-size: 10px;
   letter-spacing: 0.1em;
-
   opacity: 0.6;
 }
-
-/* =========================
-   ARTWORK CAPTION
-========================= */
 
 .gallery-caption {
   padding: 18px 0;
@@ -608,56 +351,108 @@
 
 .gallery-caption h2 {
   margin: 8px 0 4px;
-
   font-size: clamp(20px, 2.5vw, 30px);
   font-weight: 700;
 }
 
 .gallery-caption p {
   margin: 0;
-
   font-size: 12px;
   color: #817b77;
 }
-
-/* =========================
-   GALLERY FOOTER
-========================= */
 
 .gallery-scene__footer {
   position: absolute;
   bottom: 25px;
   left: 0;
-
   width: 100%;
   padding: 0 5%;
-
   display: flex;
   justify-content: space-between;
-
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.12em;
-
   color: #817b77;
 }
 
-/* =========================
-   MOBILE
-========================= */
+@media (max-width: 1024px) {
+  .hero-title-row,
+  .hero-title-bottom {
+    font-size: clamp(42px, 7.8vw, 80px);
+  }
+
+  .hero-mascot {
+    width: clamp(55px, 8vw, 95px);
+  }
+}
 
 @media (max-width: 767px) {
-  .gallery-scene__header {
-    padding: 20px;
+  .hero-header {
+    padding: 24px 20px;
+    font-size: 10px;
+  }
+
+  .hero-content {
+    padding: 0 16px;
+  }
+
+  .hero-eyebrow {
+    margin-bottom: 20px;
+    font-size: clamp(28px, 7vw, 48px);
+  }
+
+  .hero-title-row {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    font-size: clamp(30px, 8vw, 58px);
+  }
+
+  .hero-title-bottom {
+    font-size: clamp(30px, 8vw, 58px);
+  }
+
+  .hero-mascot {
+    width: clamp(42px, 12vw, 70px);
+  }
+
+  .hero-desc {
+    margin-top: 24px;
+    font-size: 13px;
+  }
+
+  .hero-scroll {
+    bottom: 28px;
+    font-size: 10px;
+  }
+
+  .hero-door {
+    bottom: 12vh;
+    --door-width: 155px;
+  }
+
+  .hero-door__frame {
+    height: 115px;
+    border-width: 6px;
+  }
+
+  .hero-door__top {
     font-size: 9px;
   }
 
+  .gallery-scene__header {
+    padding: 20px;
+    font-size: 9px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
   .gallery-hanging {
-    width: min(84vw, 420px);
+    width: min(80vw, 390px);
   }
 
   .gallery-wires {
-    height: clamp(110px, 22vh, 190px);
+    width: 72%;
+    height: clamp(24px, 4vh, 40px);
   }
 
   .gallery-artwork {
@@ -671,6 +466,7 @@
 
   .gallery-artwork__preview {
     gap: 6px;
+    aspect-ratio: 3 / 4;
   }
 
   .gallery-artwork__category {
@@ -700,5 +496,9 @@
   .gallery-scene__footer {
     padding: 0 20px;
     font-size: 9px;
+  }
+
+  .gallery-scene {
+    --gallery-header-height: 64px;
   }
 }
