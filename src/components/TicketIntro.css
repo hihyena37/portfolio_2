@@ -261,7 +261,7 @@
     flex-direction: row;
   }
 
-.ticket-shadow {
+  .ticket-shadow {
     width: 72vw;
     transform: translateY(210px);
   }

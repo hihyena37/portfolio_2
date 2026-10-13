@@ -432,6 +432,7 @@
   border-bottom: 3px solid #fff5de;
   transform: rotate(var(--light-angle));
   box-shadow: 0 5px 9px rgb(255 243 213 / 65%);
+  transition: box-shadow 500ms ease;
 }
 
 .gallery-spotlight__head::before {
@@ -485,18 +486,18 @@
   }
 }
 
+.gallery-spotlight__beam::before,
 .gallery-spotlight__beam::after {
   content: '';
   position: absolute;
   inset: 0;
+}
+
+.gallery-spotlight__beam::after {
   clip-path: polygon(47% 0, 53% 0, 100% 100%, 0 100%);
   background: linear-gradient(180deg, rgb(255 250 232 / 90%), rgb(255 248 228 / 45%) 50%, transparent 90%);
   opacity: 0;
   transition: opacity 500ms ease;
-}
-
-.gallery-spotlight__head {
-  transition: box-shadow 500ms ease;
 }
 
 .gallery-scene--spotlit .gallery-spotlight__beam::after {
@@ -508,9 +509,6 @@
 }
 
 .gallery-spotlight__beam::before {
-  content: '';
-  position: absolute;
-  inset: 0;
   clip-path: polygon(48% 0, 52% 0, 100% 100%, 0 100%);
   background: linear-gradient(180deg, rgb(255 247 225 / 95%), rgb(255 248 231 / 55%) 45%, rgb(255 248 231 / 18%) 75%, transparent 100%);
 }
@@ -589,7 +587,6 @@
 @media (max-width: 767px) {
   .hero-header {
     padding: 24px 20px;
-    font-size: 16px;
     align-items: flex-start;
     gap: 16px;
   }
@@ -599,7 +596,8 @@
   }
 
   .hero-content {
-    padding: 0 16px;
+    /* Keep the centered copy clear of SCROLL TO ENTER. */
+    padding: 0 16px 72px;
   }
 
   .hero-eyebrow {
@@ -624,11 +622,6 @@
   .hero-desc {
     margin-top: 24px;
     font-size: 13px;
-  }
-
-  /* Keep the centered copy clear of SCROLL TO ENTER. */
-  .hero-content {
-    padding-bottom: 72px;
   }
 
   .hero-about-button {
@@ -658,14 +651,9 @@
   }
 
   .gallery-scene__header {
-    padding: 16px 20px;
     font-size: 14px;
     line-height: 1.5;
     letter-spacing: 0.06em;
-    gap: 6px;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
     overflow-wrap: anywhere;
   }
 
@@ -682,15 +670,11 @@
     border-width: 2px;
   }
 
-  .gallery-artwork__mat {
-    padding: var(--gallery-mat-padding);
-  }
-
   .gallery-artwork__preview {
     aspect-ratio: 3 / 4;
   }
 
-.gallery-caption {
+  .gallery-caption {
     padding: 12px 0;
   }
 
@@ -929,14 +913,6 @@
 @media (min-width: 1921px) {
   .gallery-scene {
     --gallery-caption-space: 32px;
-  }
-
-  .gallery-hanging {
-    width: min(72vw, 960px, calc(var(--gallery-preview-height) * 4 / 3 + var(--gallery-frame-inset)));
-  }
-
-  .gallery-slide {
-    position: relative;
   }
 
   .gallery-caption {

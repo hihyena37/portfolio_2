@@ -182,12 +182,6 @@
   word-break: keep-all;
 }
 
-.about-card h4 {
-  margin: 0 0 10px;
-  font-size: 18px;
-  font-weight: 700;
-}
-
 /* 02, 03. 정보 카드 */
 .about-records {
   display: grid;
@@ -207,7 +201,9 @@
   align-items: baseline;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 18px;
+  margin: 0 0 18px;
+  font-size: 18px;
+  font-weight: 700;
   letter-spacing: 0.12em;
 }
 
@@ -299,7 +295,6 @@
 @media (max-width: 767px) {
   .about-me__bar {
     padding: 12px 16px;
-    font-size: 16px;
   }
 
   .about-me__bar-room {

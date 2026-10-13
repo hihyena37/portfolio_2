@@ -3,8 +3,6 @@ import { createPortal } from 'react-dom'
 import SparkleCursor from './SparkleCursor'
 import './AboutMe.css'
 
-// 확인되지 않은 내용은 null로 두고 화면에 '내용 준비 중'으로 표시합니다.
-// 실제 내용이 정해지면 아래 값만 교체하면 됩니다.
 const artist = {
   name: '성혜나',
   nameEn: 'SEONG HYENA',

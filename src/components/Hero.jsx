@@ -697,14 +697,12 @@ const Hero = ({ entered, onBackToStart }) => {
             }}>
             <div className="gallery-lighting" aria-hidden="true">
               <div className="gallery-lighting__rail" />
-              <div className="gallery-spotlight gallery-spotlight--left">
-                <span className="gallery-spotlight__beam" />
-                <span className="gallery-spotlight__head" />
-              </div>
-              <div className="gallery-spotlight gallery-spotlight--right">
-                <span className="gallery-spotlight__beam" />
-                <span className="gallery-spotlight__head" />
-              </div>
+              {['left', 'right'].map((side) => (
+                <div className={`gallery-spotlight gallery-spotlight--${side}`} key={side}>
+                  <span className="gallery-spotlight__beam" />
+                  <span className="gallery-spotlight__head" />
+                </div>
+              ))}
             </div>
 
             <div className="gallery-wires" aria-hidden="true">
