@@ -44,3 +44,28 @@ img {
   position: relative;
   min-height: 100vh;
 }
+/* Mini mascot cursor with a sparkle trail (mouse devices only). */
+@media (pointer: fine) {
+  html:not([data-cursor='plain']),
+  html:not([data-cursor='plain']) * {
+    cursor: url('/cursor.svg') 16 2, auto !important;
+  }
+
+  html:not([data-cursor='plain']) :is(a, button, [role='button'], label, summary, select),
+  html:not([data-cursor='plain']) :is(a, button, [role='button'], label, summary) * {
+    cursor: url('/cursor-pointer.svg') 16 2, pointer !important;
+  }
+
+  html :is(input, textarea) {
+    cursor: text !important;
+  }
+}
+
+.sparkle-cursor {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+}

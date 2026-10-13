@@ -1,6 +1,7 @@
 import { useState } from "react"
 import Hero from './components/Hero'
 import TicketIntro from './components/TicketIntro'
+import SparkleCursor from './components/SparkleCursor'
 
 const App = () => {
   const [entered, setEntered] = useState(false)
@@ -16,10 +17,13 @@ const App = () => {
   }
 
   return (
-    <div className="wrap" key={visit}>
-      <Hero entered={entered} onBackToStart={returnToStart} />
-      <TicketIntro setEntered={setEntered} />
-    </div>
+    <>
+      <div className="wrap" key={visit}>
+        <Hero entered={entered} onBackToStart={returnToStart} />
+        <TicketIntro setEntered={setEntered} />
+      </div>
+      <SparkleCursor />
+    </>
   )
 }
 

@@ -1,0 +1,352 @@
+.about-me {
+  width: 100vw;
+  max-width: none;
+  height: 100dvh;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(109, 77, 255, 0.07), transparent 60%),
+    #f8f6f1;
+  color: #25212b;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.about-me[open] {
+  animation: about-zoom-in 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.about-me::backdrop {
+  background: rgba(39, 30, 24, 0.4);
+}
+
+.about-me__bar {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 5%;
+  background: rgba(248, 246, 241, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid #e6ded2;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+}
+
+.about-me__bar button {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 10px 16px;
+  border: 1px solid #6d4dff;
+  border-radius: 6px;
+  background: transparent;
+  color: #6d4dff;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  transition: background 200ms ease, color 200ms ease;
+}
+
+.about-me__bar button:hover {
+  background: #6d4dff;
+  color: #fff;
+}
+
+.about-me__inner {
+  width: min(1040px, 100%);
+  margin: 0 auto;
+  padding: clamp(40px, 7vw, 88px) 5% 96px;
+}
+
+.about-me__intro {
+  margin-bottom: clamp(40px, 6vw, 72px);
+  text-align: center;
+}
+
+.about-me__eyebrow,
+.about-section__number {
+  margin: 0;
+  color: #6d4dff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+}
+
+.about-me__intro h2 {
+  margin: 12px 0 0;
+  font-size: clamp(36px, 6vw, 72px);
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+}
+
+.about-section {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  column-gap: 24px;
+  padding: clamp(32px, 5vw, 56px) 0;
+  border-top: 1px solid #ddd3c6;
+}
+
+.about-section__number {
+  font-size: clamp(28px, 3.4vw, 40px);
+  font-weight: 800;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+.about-section__title {
+  margin: 0 0 28px;
+  font-size: clamp(20px, 2.4vw, 28px);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.about-section > :not(.about-section__number) {
+  grid-column: 2;
+}
+
+.about-section > .about-section__number {
+  grid-row: 1 / span 2;
+}
+
+/* 01. ARTIST PROFILE — 전시장 작가 패널 */
+.about-profile__panel {
+  display: grid;
+  grid-template-columns: minmax(180px, 280px) 1fr;
+  align-items: center;
+  gap: clamp(24px, 4vw, 48px);
+  padding: clamp(20px, 3vw, 32px);
+  background: #fffdf8;
+  border: 1px solid #e6ded2;
+  box-shadow: 0 18px 40px rgba(65, 47, 35, 0.08);
+}
+
+.about-profile__portrait {
+  margin: 0;
+  padding: 12px;
+  background: #b78d60;
+  border: 3px solid #987044;
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.25);
+}
+
+.about-profile__portrait img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+  padding: 12%;
+  background: #f3eee6;
+}
+
+.about-profile__role {
+  margin: 0 0 12px;
+  color: #987044;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.about-profile__name {
+  margin: 0;
+  font-size: clamp(30px, 4vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.about-profile__name span {
+  display: block;
+  margin-top: 6px;
+  color: #77716d;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+}
+
+.about-profile__line {
+  margin: 24px 0 0;
+  padding-top: 20px;
+  border-top: 1px solid #e6ded2;
+  font-size: 16px;
+  line-height: 1.7;
+  word-break: keep-all;
+}
+
+/* 02. ABOUT ME */
+.about-text {
+  display: grid;
+  gap: 28px;
+}
+
+.about-text h4,
+.about-card h4 {
+  margin: 0 0 10px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.about-text p {
+  margin: 0;
+  color: #4b4450;
+  font-size: 15px;
+  line-height: 1.8;
+  word-break: keep-all;
+}
+
+/* 03, 04. 정보 카드 */
+.about-records {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.about-card {
+  padding: 24px;
+  background: #fffdf8;
+  border: 1px solid #e6ded2;
+  border-top: 3px solid #6d4dff;
+}
+
+.about-card h4 {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+  letter-spacing: 0.12em;
+}
+
+.about-card h4 span {
+  color: #77716d;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.about-card ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.about-card li {
+  padding: 8px 14px;
+  border: 1px solid #d7ccff;
+  border-radius: 999px;
+  color: #4a33c2;
+  background: #f4f0ff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.about-card > p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.about-timeline {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.about-timeline li {
+  padding: 0 0 16px 16px;
+  border-left: 2px solid #d7ccff;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.about-timeline__period {
+  display: block;
+  color: #6d4dff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.about-timeline p {
+  margin: 4px 0 0;
+  color: #4b4450;
+}
+
+.about-pending {
+  display: inline-block;
+  padding: 4px 10px;
+  border: 1px dashed #b9aee0;
+  border-radius: 4px;
+  color: #77716d;
+  font-size: 13px;
+}
+
+.about-me :focus-visible {
+  outline: 2px solid #6d4dff;
+  outline-offset: 4px;
+}
+
+@keyframes about-zoom-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 1024px) {
+  .about-records {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 767px) {
+  .about-me__bar {
+    padding: 12px 16px;
+    font-size: 16px;
+  }
+
+  .about-me__bar button {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .about-me__inner {
+    padding: 40px 16px 72px;
+  }
+
+  .about-section {
+    grid-template-columns: 1fr;
+  }
+
+  .about-section > :not(.about-section__number),
+  .about-section > .about-section__number {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .about-section__number {
+    padding: 0 0 12px;
+  }
+
+  .about-profile__panel {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .about-profile__portrait {
+    width: min(220px, 70%);
+    margin: 0 auto;
+  }
+
+  .about-card {
+    padding: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-me[open] { animation: none; }
+}

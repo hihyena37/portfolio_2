@@ -24,7 +24,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12px;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: 0.12em;
   color: #25212b;
@@ -102,6 +102,30 @@
   color: #77716d;
 }
 
+.hero-about-button {
+  margin-top: 24px;
+  min-height: 44px;
+  padding: 10px 22px;
+  border: 1px solid #6d4dff;
+  border-radius: 999px;
+  background: transparent;
+  color: #6d4dff;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  transition: background 250ms ease, color 250ms ease;
+}
+
+.hero-about-button:hover {
+  background: #6d4dff;
+  color: #fff;
+}
+
+.hero-about-button:focus-visible {
+  outline: 2px solid #6d4dff;
+  outline-offset: 4px;
+}
+
 .hero-scroll {
   position: absolute;
   bottom: 35px;
@@ -118,9 +142,15 @@
   white-space: nowrap;
 }
 
-.scroll-arrow {
-  font-size: 22px;
-  font-weight: 400;
+.scroll-mouse {
+  width: 28px;
+  height: 28px;
+  animation: scroll-mouse-bob 1.6s ease-in-out infinite;
+}
+
+@keyframes scroll-mouse-bob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
 }
 
 .hero-door {
@@ -239,10 +269,11 @@
       #d5cfc5 100%);
   opacity: 0;
   visibility: hidden;
-  --gallery-header-height: 76px;
+  --gallery-header-height: 120px;
   --gallery-wire-height: clamp(24px, 5dvh, 64px);
   --gallery-caption-space: 180px;
-  --gallery-footer-space: 230px;
+  --gallery-footer-bottom: clamp(32px, 6dvh, 64px);
+  --gallery-footer-space: calc(156px + var(--gallery-footer-bottom));
   --gallery-mat-padding: clamp(10px, 2vw, 22px);
   --gallery-frame-inset: calc(30px + 2 * var(--gallery-mat-padding));
   /* Fit the frame by both width and height, leaving room for its caption. */
@@ -254,7 +285,7 @@
   top: 0;
   left: 0;
   width: 100%;
-  padding: 30px 5%;
+  padding: 0 5%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -319,8 +350,8 @@
 }
 
 .gallery-header-actions button {
-  min-height: 44px;
-  padding: 10px 16px;
+  min-height: 42px;
+  padding: 8px 14px;
   border: 1px solid #81756a;
   border-radius: 6px;
   color: #39313d;
@@ -350,7 +381,16 @@
   .gallery-scene__header > span { max-width: 160px; }
   .gallery-header-actions { gap: 6px; }
   .gallery-header-actions button { padding: 8px; font-size: 12px; }
-  .gallery-start-full { display: none; }
+}
+
+@media (max-width: 479px) {
+  .gallery-scene .gallery-scene__header {
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+  .gallery-scene__header > span { max-width: 110px; }
+  .gallery-header-actions { gap: 4px; margin-left: auto; }
+  .gallery-header-actions button { min-height: 40px; padding: 6px; font-size: 11px; }
 }
 
 .gallery-lighting {
@@ -413,6 +453,43 @@
   transform: translateX(-50%) rotate(var(--light-angle));
   transform-origin: 50% 0;
   filter: blur(8px);
+}
+
+/* Hovering the artwork dims the wall and brightens the spotlights. */
+.gallery-scene::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 45%, rgb(30 24 18 / 6%) 0%, rgb(30 24 18 / 26%) 70%);
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+.gallery-scene--spotlit::before {
+  opacity: 1;
+}
+
+.gallery-spotlight__beam::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(47% 0, 53% 0, 100% 100%, 0 100%);
+  background: linear-gradient(180deg, rgb(255 250 232 / 90%), rgb(255 248 228 / 45%) 50%, transparent 90%);
+  opacity: 0;
+  transition: opacity 500ms ease;
+}
+
+.gallery-spotlight__head {
+  transition: box-shadow 500ms ease;
+}
+
+.gallery-scene--spotlit .gallery-spotlight__beam::after {
+  opacity: 1;
+}
+
+.gallery-scene--spotlit .gallery-spotlight__head {
+  box-shadow: 0 6px 14px rgb(255 243 213 / 95%);
 }
 
 .gallery-spotlight__beam::before {
@@ -497,7 +574,13 @@
 @media (max-width: 767px) {
   .hero-header {
     padding: 24px 20px;
-    font-size: 10px;
+    font-size: 16px;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .hero-header span:last-child {
+    text-align: right;
   }
 
   .hero-content {
@@ -526,6 +609,18 @@
   .hero-desc {
     margin-top: 24px;
     font-size: 13px;
+  }
+
+  /* Keep the centered copy clear of SCROLL TO ENTER. */
+  .hero-content {
+    padding-bottom: 72px;
+  }
+
+  .hero-about-button {
+    margin-top: 18px;
+    min-height: 40px;
+    padding: 8px 18px;
+    font-size: 11px;
   }
 
   .hero-scroll {
@@ -615,6 +710,12 @@
   object-position: center top;
 }
 
+@media (min-width: 768px) {
+  .gallery-artwork__preview img {
+    object-position: var(--preview-position, center top);
+  }
+}
+
 .gallery-artwork:focus-visible {
   outline: 3px solid #6d4dff;
   outline-offset: 5px;
@@ -692,7 +793,7 @@
 }
 
 .gallery-navigation {
-  bottom: 20px;
+  bottom: var(--gallery-footer-bottom);
   flex-direction: column;
   align-items: center;
   gap: 12px;
@@ -758,12 +859,15 @@
 }
 
 .gallery-navigation .gallery-autoplay-button {
+  position: absolute;
+  right: 5%;
+  /* Sits 24px above the screen edge, below the raised navigation. */
+  bottom: calc(24px - var(--gallery-footer-bottom));
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   min-height: 40px;
-  margin-top: 2px;
   padding: 8px 18px;
   border: 1px solid #b7aa9b;
   border-radius: 999px;
@@ -776,6 +880,19 @@
 
 .gallery-navigation .gallery-autoplay-button:hover {
   background: #eee8de;
+}
+
+@media (max-width: 767px) {
+  .gallery-navigation .gallery-autoplay-button {
+    right: 20px;
+    width: 44px;
+    min-height: 44px;
+    padding: 0;
+  }
+
+  .gallery-autoplay-label {
+    display: none;
+  }
 }
 
 @keyframes gallery-drift {
@@ -910,7 +1027,7 @@
   text-align: left;
 }
 
-.gallery-contact__links a {
+.gallery-contact__links :is(a, button) {
   display: grid;
   grid-template-columns: 72px minmax(0, 1fr);
   align-items: center;
@@ -924,9 +1041,19 @@
   border-radius: 6px;
 }
 
-.gallery-contact__links a span { font-size: 16px; font-weight: 600; letter-spacing: 0.08em; }
-.gallery-contact__links a:hover { background: rgb(255 250 240 / 55%); }
-.gallery-contact__links a:focus-visible { outline: 2px solid #6d4dff; outline-offset: 2px; }
+.gallery-contact__links button {
+  width: 100%;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  line-height: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+
+.gallery-contact__links :is(a, button) span { font-size: 16px; font-weight: 600; letter-spacing: 0.08em; }
+.gallery-contact__links :is(a, button):hover { background: rgb(255 250 240 / 55%); }
+.gallery-contact__links :is(a, button):focus-visible { outline: 2px solid #6d4dff; outline-offset: 2px; }
 
 .gallery-ending h2 {
   margin: 0;
@@ -944,7 +1071,7 @@
   word-break: keep-all;
 }
 
-.gallery-ending button {
+.gallery-ending > button {
   padding: 14px 24px;
   border: 1px solid #81756a;
   border-radius: 999px;
@@ -953,8 +1080,8 @@
   font-size: 16px;
 }
 
-.gallery-ending button:hover { background: #fff0d9; }
-.gallery-ending button:focus-visible { outline: 2px solid #6d4dff; outline-offset: 4px; }
+.gallery-ending > button:hover { background: #fff0d9; }
+.gallery-ending > button:focus-visible { outline: 2px solid #6d4dff; outline-offset: 4px; }
 
 /* PC: fit the whole ending in one viewport by scaling with its height. */
 @media (min-width: 768px) {
@@ -984,7 +1111,7 @@
     margin-top: clamp(16px, 3dvh, 28px);
   }
 
-  .gallery-contact__links a {
+  .gallery-contact__links :is(a, button) {
     grid-template-columns: none;
     justify-items: center;
     gap: 12px;
@@ -999,6 +1126,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .scroll-mouse,
   .gallery-ending__mascot,
   .mascot-svg--celebrate,
   .mascot-mouth--smile,

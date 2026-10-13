@@ -16,7 +16,8 @@ export const galleryProjects = [
     "caption": "RESPONSIVE WEB DESIGN & PUBLISHING",
     "workType": "개인 프로젝트",
     "viewLabel": "작업 사이트 보기",
-    "preview": "previews/project1.webp"
+    "preview": "previews/project1.jpg",
+    "previewMobile": "previews/project1-1.webp"
   },
   {
     "number": "02",
@@ -35,7 +36,7 @@ export const galleryProjects = [
     "caption": "RESPONSIVE CLONE CODING",
     "workType": "개인 프로젝트",
     "viewLabel": "작업 사이트 보기",
-    "preview": "previews/project2.webp"
+    "preview": "previews/project2.webp?v=3"
   },
   {
     "number": "03",
@@ -54,7 +55,8 @@ export const galleryProjects = [
     "category": "FESTIVAL DASHBOARD",
     "caption": "VIBE CODING · FESTIVAL DASHBOARD",
     "workType": "개인 프로젝트",
-    "preview": "previews/project3.webp"
+    "preview": "previews/project3.webp?v=3",
+    "previewMobile": "previews/project3-1.webp"
   },
   {
     "number": "04",
@@ -73,7 +75,7 @@ export const galleryProjects = [
     "caption": "VIBE CODING · REACT MEAL RECOMMENDATION",
     "workType": "개인 프로젝트",
     "viewLabel": "작업 사이트 보기",
-    "preview": "previews/project4.webp"
+    "preview": "previews/project4.webp?v=3"
   },
   {
     "number": "05",
@@ -149,7 +151,8 @@ export const galleryProjects = [
     "category": "DETAIL PAGE",
     "caption": "PRODUCT DETAIL PAGE",
     "workType": "개인 프로젝트",
-    "preview": "previews/project8.webp"
+    "preview": "previews/project8.webp",
+    "previewPosition": "center 15%"
   },
   {
     "number": "09",

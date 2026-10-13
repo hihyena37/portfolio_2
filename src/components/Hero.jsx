@@ -5,21 +5,60 @@ import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
 
 import Mascot from './Mascot'
 import ProjectStory from './ProjectStory'
+import AboutMe from './AboutMe'
 import { galleryProjects } from '../data/galleryProjects'
 import './Hero.css'
+
+const CONTACT_EMAIL = 'hihyena37@gmail.com'
+// Scroll timeline time when the gallery room fades in after the door opens.
+const GALLERY_VISIBLE_TIME = 2.55
 
 gsap.registerPlugin(ScrollTrigger, MotionPathPlugin)
 
 const Hero = ({ entered, onBackToStart }) => {
   const [storyOpen, setStoryOpen] = useState(false)
+  const [aboutOpen, setAboutOpen] = useState(false)
   const [activeProject, setActiveProject] = useState(0)
   const [transitionTarget, setTransitionTarget] = useState(null)
   const [exhibitionEnded, setExhibitionEnded] = useState(false)
   const endingTitleRef = useRef(null)
   const [galleryReady, setGalleryReady] = useState(false)
+  const [galleryVisible, setGalleryVisible] = useState(false)
   const [autoPaused, setAutoPaused] = useState(false)
   const [artworkHovered, setArtworkHovered] = useState(false)
   const [artworkFocused, setArtworkFocused] = useState(false)
+  const [emailCopied, setEmailCopied] = useState(false)
+  const emailCopiedTimer = useRef(null)
+
+  useEffect(() => () => window.clearTimeout(emailCopiedTimer.current), [])
+
+  // The mascot cursor and sparkle trail distract from the framed artworks, so use the plain cursor there.
+  const viewingArtworks = (galleryVisible || galleryReady) && !exhibitionEnded
+  useEffect(() => {
+    if (!viewingArtworks) return
+    document.documentElement.dataset.cursor = 'plain'
+    return () => { delete document.documentElement.dataset.cursor }
+  }, [viewingArtworks])
+
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText(CONTACT_EMAIL)
+    } catch {
+      // Fallback for browsers without the async clipboard API (e.g. non-HTTPS).
+      const field = document.createElement('textarea')
+      field.value = CONTACT_EMAIL
+      field.setAttribute('readonly', '')
+      field.style.position = 'fixed'
+      field.style.opacity = '0'
+      document.body.appendChild(field)
+      field.select()
+      document.execCommand('copy')
+      field.remove()
+    }
+    setEmailCopied(true)
+    window.clearTimeout(emailCopiedTimer.current)
+    emailCopiedTimer.current = window.setTimeout(() => setEmailCopied(false), 2000)
+  }
   const swipeRef = useRef(null)
   const suppressClickRef = useRef(false)
   const project = galleryProjects[activeProject]
@@ -40,6 +79,7 @@ const Hero = ({ entered, onBackToStart }) => {
   const bottomTextRef = useRef(null)
   const eyebrowRef = useRef(null)
   const descRef = useRef(null)
+  const aboutButtonRef = useRef(null)
 
   // Jump to the settled end of the pinned scroll range without replaying the scrub.
   const settleGalleryScroll = () => {
@@ -72,10 +112,11 @@ const Hero = ({ entered, onBackToStart }) => {
   useEffect(() => {
     if (!entered) return
     // Prepare lightweight previews during the entrance animation.
+    const isMobile = window.matchMedia('(max-width: 767px)').matches
     const previews = galleryProjects.map((item) => {
       const image = new Image()
       image.decoding = 'async'
-      image.src = import.meta.env.BASE_URL + item.preview
+      image.src = import.meta.env.BASE_URL + ((isMobile && item.previewMobile) || item.preview)
       image.decode().catch(() => {})
       return image
     })
@@ -90,6 +131,13 @@ const Hero = ({ entered, onBackToStart }) => {
     let resizing = false
     let resizeTimer
     let savedProgress = 0
+
+    // The intro scales the hero past the viewport; hide scrollbars until the
+    // scroll animation exists so they appear only once, with the mascot.
+    const root = document.documentElement
+    const previousOverflow = root.style.overflow
+    root.style.overflow = 'hidden'
+    const restoreOverflow = () => { root.style.overflow = previousOverflow }
 
     const handleResize = () => {
       if (!resizing) savedProgress = scrollTl?.totalProgress() ?? 0
@@ -150,6 +198,7 @@ const Hero = ({ entered, onBackToStart }) => {
           if (!ScrollTrigger.isRefreshing && !resizing) {
             galleryActive = this.time() >= 4.09
             setGalleryReady(galleryActive)
+            setGalleryVisible(this.time() >= GALLERY_VISIBLE_TIME)
           }
         },
         scrollTrigger: {
@@ -171,6 +220,7 @@ const Hero = ({ entered, onBackToStart }) => {
               self.animation.totalProgress(self.progress)
               galleryActive = self.animation.time() >= 4.09
               setGalleryReady(galleryActive)
+              setGalleryVisible(self.animation.time() >= GALLERY_VISIBLE_TIME)
             }
           },
 
@@ -210,6 +260,7 @@ const Hero = ({ entered, onBackToStart }) => {
             eyebrowRef.current,
             bottomTextRef.current,
             descRef.current,
+            aboutButtonRef.current,
           ],
           {
             y: 65,
@@ -341,7 +392,7 @@ const Hero = ({ entered, onBackToStart }) => {
             duration: 0.35,
             ease: 'none',
           },
-          2.55
+          GALLERY_VISIBLE_TIME
         )
 
         // 액자가 천장에서 내려옴
@@ -397,6 +448,7 @@ const Hero = ({ entered, onBackToStart }) => {
     const introTl = gsap.timeline({
       onComplete: () => {
         floating.play()
+        restoreOverflow()
         createScrollAnimation()
       },
     })
@@ -462,6 +514,7 @@ const Hero = ({ entered, onBackToStart }) => {
     return () => {
       window.removeEventListener('resize', handleResize)
       window.clearTimeout(resizeTimer)
+      restoreOverflow()
       introTl.kill()
       floating.kill()
       scrollTl?.scrollTrigger?.kill()
@@ -516,6 +569,11 @@ const Hero = ({ entered, onBackToStart }) => {
         <p className="hero-desc" ref={descRef}>
           Designing Ideas, Creating Experiences.
         </p>
+
+        <button className="hero-about-button" type="button" ref={aboutButtonRef}
+          aria-haspopup="dialog" onClick={() => setAboutOpen(true)}>
+          ABOUT THE ARTIST <span aria-hidden="true">↗</span>
+        </button>
       </div>
 
       <div className="hero-door" ref={doorRef}>
@@ -544,7 +602,7 @@ const Hero = ({ entered, onBackToStart }) => {
         </div>
       </div>
 
-      <div className="gallery-scene" ref={galleryRef} inert={!galleryReady && !exhibitionEnded}
+      <div className={`gallery-scene${artworkHovered ? ' gallery-scene--spotlit' : ''}`} ref={galleryRef} inert={!galleryReady && !exhibitionEnded}
         role="region" aria-label="작품 전시 슬라이드"
         onKeyDown={(event) => {
           if (exhibitionEnded) return
@@ -561,9 +619,9 @@ const Hero = ({ entered, onBackToStart }) => {
         <div className="gallery-scene__header">
           <span>HYENA'S EXHIBITION</span>
           <nav className="gallery-header-actions" aria-label="전시 메뉴">
-            <button type="button" onClick={onBackToStart} aria-label="티켓 인트로로 돌아가기">
-              <span className="gallery-start-full">BACK TO </span>START ↺
-            </button>
+            <button type="button" onClick={onBackToStart} aria-label="티켓 인트로로 돌아가기">START ↺</button>
+            <button type="button" className="gallery-connect-button" aria-haspopup="dialog"
+              onClick={() => setAboutOpen(true)}>ABOUT ↗</button>
             <button type="button" className="gallery-connect-button" onClick={() => {
               setTransitionTarget(null)
               setExhibitionEnded(true)
@@ -616,7 +674,7 @@ const Hero = ({ entered, onBackToStart }) => {
             key={`${activeProject}-${transitionTarget}-${offset}`}
             inert={offset === 1}
             aria-hidden={offset === 1 ? true : undefined}
-            style={{ animationPlayState: !galleryReady || storyOpen || (!manual && (autoPaused || artworkHovered || artworkFocused)) ? 'paused' : 'running' }}
+            style={{ animationPlayState: !galleryReady || storyOpen || aboutOpen || (!manual && (autoPaused || artworkHovered || artworkFocused)) ? 'paused' : 'running' }}
             onAnimationEnd={(event) => {
               if (offset === 0 && event.target === event.currentTarget) {
                 if (transitionTarget === null && activeProject === galleryProjects.length - 1) {
@@ -657,11 +715,20 @@ const Hero = ({ entered, onBackToStart }) => {
             >
               <div className="gallery-artwork__mat">
                 <div className="gallery-artwork__preview">
-                  <img
-                    src={`${import.meta.env.BASE_URL}${project.preview}`}
-                    decoding="async"
-                    alt={`${project.name} 작품 미리보기`}
-                  />
+                  <picture>
+                    {project.previewMobile && (
+                      <source
+                        media="(max-width: 767px)"
+                        srcSet={`${import.meta.env.BASE_URL}${project.previewMobile}`}
+                      />
+                    )}
+                    <img
+                      src={`${import.meta.env.BASE_URL}${project.preview}`}
+                      decoding="async"
+                      style={project.previewPosition ? { '--preview-position': project.previewPosition } : undefined}
+                      alt={`${project.name} 작품 미리보기`}
+                    />
+                  </picture>
                 </div>
               </div>
             </a>
@@ -710,7 +777,7 @@ const Hero = ({ entered, onBackToStart }) => {
             aria-label={autoPaused ? '작품 자동 넘기기 재생' : '작품 자동 넘기기 일시정지'}
             aria-pressed={autoPaused} onClick={() => setAutoPaused(!autoPaused)}>
             <span aria-hidden="true">{autoPaused ? '▶' : 'Ⅱ'}</span>
-            {autoPaused ? '재생' : '일시정지'}
+            <span className="gallery-autoplay-label">{autoPaused ? '재생' : '일시정지'}</span>
           </button>
         </nav>
 
@@ -724,7 +791,10 @@ const Hero = ({ entered, onBackToStart }) => {
               <h3 id="gallery-contact-title" tabIndex={-1}>LET’S CONNECT</h3>
               <p>함께 만들고 싶은 이야기가 있다면 연락해 주세요.</p>
               <div className="gallery-contact__links">
-                <a href="mailto:hihyena37@gmail.com"><span>EMAIL</span>hihyena37@gmail.com</a>
+                <button type="button" onClick={copyEmail}
+                  aria-label={emailCopied ? '이메일 주소가 복사되었습니다' : `이메일 주소 ${CONTACT_EMAIL} 복사하기`}>
+                  <span>EMAIL</span>{emailCopied ? '복사되었어요!' : CONTACT_EMAIL}
+                </button>
                 <a href="tel:+821062960440"><span>PHONE</span>010-6296-0440</a>
                 <a href="https://github.com/hihyena37" target="_blank" rel="noopener noreferrer"
                   aria-label="GitHub hihyena37 (새 탭)"><span>GITHUB</span>hihyena37 ↗</a>
@@ -748,10 +818,14 @@ const Hero = ({ entered, onBackToStart }) => {
 
       <div className="hero-scroll" ref={hintRef}>
         <span>SCROLL TO ENTER</span>
-        <span className="scroll-arrow">↓</span>
+        {/* Bootstrap Icons "mouse" (MIT) */}
+        <svg className="scroll-mouse" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+          <path d="M8 3a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 3m4 8a4 4 0 0 1-8 0V5a4 4 0 1 1 8 0zM8 0a5 5 0 0 0-5 5v6a5 5 0 0 0 10 0V5a5 5 0 0 0-5-5" />
+        </svg>
       </div>
 
       {storyOpen && <ProjectStory project={project} onClose={() => setStoryOpen(false)} />}
+      {aboutOpen && <AboutMe onClose={() => setAboutOpen(false)} />}
 
     </section>
   )
