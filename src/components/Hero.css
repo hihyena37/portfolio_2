@@ -338,3 +338,95 @@
     font-size: 9px;
   }
 }
+
+/* =========================
+   DOOR ZOOM & GALLERY
+========================= */
+
+.hero-door {
+  left: 50%;
+  margin-left: -110px;
+  transform: none;
+  transform-origin: center center;
+  z-index: 10;
+  will-change: transform;
+}
+
+.hero-door__frame {
+  position: relative;
+  isolation: isolate;
+}
+
+.gallery-interior {
+  position: absolute;
+  inset: 0;
+
+  z-index: 0;
+  overflow: hidden;
+
+  background: #f8f6f1;
+}
+
+.gallery-interior__wall {
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      #fffcf6 0%,
+      #f4ede2 100%
+    );
+}
+
+.gallery-interior__light {
+  position: absolute;
+  top: 0;
+  left: 50%;
+
+  width: 65%;
+  height: 80%;
+
+  transform: translateX(-50%);
+
+  background: radial-gradient(
+    ellipse at top,
+    rgba(255, 255, 255, 0.95),
+    transparent 75%
+  );
+}
+
+.hero-door__left,
+.hero-door__right {
+  position: relative;
+  z-index: 2;
+
+  flex: 0 0 50%;
+  will-change: transform;
+}
+
+.hero-door__left {
+  background: linear-gradient(
+    90deg,
+    #9476d7,
+    #b09aeb
+  );
+}
+
+.hero-door__right {
+  background: linear-gradient(
+    90deg,
+    #b09aeb,
+    #9476d7
+  );
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 767px) {
+  .hero-door {
+    margin-left: -77.5px;
+  }
+}

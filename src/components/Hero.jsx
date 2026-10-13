@@ -15,6 +15,9 @@ const Hero = ({ entered }) => {
   const floatRef = useRef(null)
   const hintRef = useRef(null)
   const doorRef = useRef(null)
+  const doorLeftRef = useRef(null)
+  const doorRightRef = useRef(null)
+
 
   const leftTextRef = useRef(null)
   const rightTextRef = useRef(null)
@@ -72,7 +75,7 @@ const Hero = ({ entered }) => {
         scrollTrigger: {
           trigger: heroRef.current,
           start: 'top top',
-          end: '+=1800',
+          end: '+=3200',
           pin: true,
           scrub: 1,
           anticipatePin: 1,
@@ -170,11 +173,74 @@ const Hero = ({ entered }) => {
           0.85
         )
         .to(
-          {},
+          mascotRef.current,
           {
-            duration: 0.2,
-          }
+            autoAlpha: 0,
+            scale: 0.5,
+            duration: 0.25,
+            ease: 'none',
+          },
+          1.05
         )
+        .to(
+          doorRef.current,
+          {
+            scale: () => {
+              const frame = doorRef.current.querySelector(
+                '.hero-door__frame'
+              )
+
+              const rect = frame.getBoundingClientRect()
+
+              return Math.max(
+                window.innerWidth / rect.width,
+                window.innerHeight / rect.height
+              ) * 1.15
+            },
+            x: () => {
+              const rect = doorRef.current.getBoundingClientRect()
+
+              return (
+                window.innerWidth / 2 -
+                (rect.left + rect.width / 2)
+              )
+            },
+            y: () => {
+              const frame = doorRef.current.querySelector(
+                '.hero-door__frame'
+              )
+
+              const rect = frame.getBoundingClientRect()
+
+              return (
+                window.innerHeight / 2 -
+                (rect.top + rect.height / 2)
+              )
+            },
+            duration: 0.65,
+            ease: 'power2.inOut',
+          },
+          1.25
+        )
+        .to(
+          doorLeftRef.current,
+          {
+            xPercent: -105,
+            duration: 0.55,
+            ease: 'power2.inOut',
+          },
+          1.95
+        )
+        .to(
+          doorRightRef.current,
+          {
+            xPercent: 105,
+            duration: 0.55,
+            ease: 'power2.inOut',
+          },
+          1.95
+        )
+        .to({}, { duration: 0.25 })
 
       ScrollTrigger.refresh()
     }
@@ -296,8 +362,23 @@ const Hero = ({ entered }) => {
         </div>
 
         <div className="hero-door__frame">
-          <div className="hero-door__left" />
-          <div className="hero-door__right" />
+
+          <div className="gallery-interior">
+            <div className="gallery-interior__wall">
+              <div className="gallery-interior__light" />
+            </div>
+          </div>
+
+          <div
+            className="hero-door__left"
+            ref={doorLeftRef}
+          />
+
+          <div
+            className="hero-door__right"
+            ref={doorRightRef}
+          />
+
         </div>
       </div>
 
