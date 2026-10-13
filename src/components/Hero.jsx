@@ -14,9 +14,9 @@ const Hero = ({ entered }) => {
   const [storyOpen, setStoryOpen] = useState(false)
   const [activeProject, setActiveProject] = useState(0)
   const [galleryReady, setGalleryReady] = useState(false)
-  const [slideDirection, setSlideDirection] = useState(1)
   const [autoPaused, setAutoPaused] = useState(false)
   const [artworkHovered, setArtworkHovered] = useState(false)
+  const [artworkFocused, setArtworkFocused] = useState(false)
   const swipeRef = useRef(null)
   const suppressClickRef = useRef(false)
   const project = galleryProjects[activeProject]
@@ -52,20 +52,24 @@ const Hero = ({ entered }) => {
   }, [entered])
 
   useEffect(() => {
-    if (!galleryReady || storyOpen || autoPaused || artworkHovered) return
-
-    const timer = window.setTimeout(() => {
-      setSlideDirection(1)
-      setActiveProject((activeProject + 1) % galleryProjects.length)
-    }, 3000)
-
-    return () => window.clearTimeout(timer)
-  }, [galleryReady, storyOpen, autoPaused, artworkHovered, activeProject])
-
-  useEffect(() => {
     if (!entered) return
 
     let scrollTl
+    let galleryActive = false
+    let resizing = false
+    let resizeTimer
+    let savedProgress = 0
+
+    const handleResize = () => {
+      if (!resizing) savedProgress = scrollTl?.totalProgress() ?? 0
+      resizing = true
+      window.clearTimeout(resizeTimer)
+      resizeTimer = window.setTimeout(() => {
+        ScrollTrigger.refresh()
+        resizing = false
+      }, 250)
+    }
+    window.addEventListener('resize', handleResize)
 
     const floating = gsap.to(floatRef.current, {
       y: -12,
@@ -110,7 +114,12 @@ const Hero = ({ entered }) => {
 
       scrollTl = gsap.timeline({
         onUpdate: function () {
-          setGalleryReady(this.time() >= 4.1)
+          // Refresh temporarily rewinds the timeline while measuring the layout.
+          // Only publish the settled state, otherwise React can leave the gallery inert.
+          if (!ScrollTrigger.isRefreshing && !resizing) {
+            galleryActive = this.time() >= 4.09
+            setGalleryReady(galleryActive)
+          }
         },
         scrollTrigger: {
           trigger: heroRef.current,
@@ -120,6 +129,19 @@ const Hero = ({ entered }) => {
           scrub: 1,
           anticipatePin: 1,
           invalidateOnRefresh: true,
+          onRefresh: (self) => {
+            // Restore the actual scroll position immediately after a resize,
+            // without waiting for another scroll event to finish the scrub.
+            self.getTween()?.progress(1)
+            if (resizing && galleryActive) {
+              self.scroll(self.start + (self.end - self.start) * savedProgress)
+              self.animation.totalProgress(savedProgress)
+            } else {
+              self.animation.totalProgress(self.progress)
+              galleryActive = self.animation.time() >= 4.09
+              setGalleryReady(galleryActive)
+            }
+          },
 
           onUpdate: (self) => {
             if (self.progress > 0.001) {
@@ -407,6 +429,8 @@ const Hero = ({ entered }) => {
       )
 
     return () => {
+      window.removeEventListener('resize', handleResize)
+      window.clearTimeout(resizeTimer)
       introTl.kill()
       floating.kill()
       scrollTl?.scrollTrigger?.kill()
@@ -416,8 +440,9 @@ const Hero = ({ entered }) => {
 
   const selectProject = (index) => {
     if (!galleryReady || index < 0 || index >= galleryProjects.length || index === activeProject) return
-    setSlideDirection(index > activeProject ? 1 : -1)
     setActiveProject(index)
+    setArtworkHovered(false)
+    setArtworkFocused(false)
   }
 
   const projectLink = project.link.startsWith('https://')
@@ -502,10 +527,10 @@ const Hero = ({ entered }) => {
         </div>
 
         <div className="gallery-hanging" ref={frameRef}
-          onPointerEnter={(event) => {
-            if (event.pointerType === 'mouse') setArtworkHovered(true)
+          onFocusCapture={() => setArtworkFocused(true)}
+          onBlurCapture={(event) => {
+            if (!event.currentTarget.contains(event.relatedTarget)) setArtworkFocused(false)
           }}
-          onPointerLeave={() => setArtworkHovered(false)}
           onPointerDown={(event) => {
             suppressClickRef.current = false
             if (event.pointerType === 'touch') swipeRef.current = { x: event.clientX, y: event.clientY }
@@ -530,7 +555,12 @@ const Hero = ({ entered }) => {
             }
           }}>
           <div className="gallery-slide" key={project.number}
-            style={{ '--slide-offset': slideDirection > 0 ? '48px' : '-48px' }}>
+            style={{ animationPlayState: !galleryReady || storyOpen || autoPaused || artworkHovered || artworkFocused ? 'paused' : 'running' }}
+            onAnimationEnd={(event) => {
+              if (event.target === event.currentTarget && event.animationName === 'gallery-drift') {
+                setActiveProject((index) => (index + 1) % galleryProjects.length)
+              }
+            }}>
 
             <div className="gallery-wires" aria-hidden="true">
               <span className="gallery-wire" />
@@ -539,6 +569,10 @@ const Hero = ({ entered }) => {
 
             <a
               className="gallery-artwork"
+              onPointerEnter={(event) => {
+                if (event.pointerType === 'mouse') setArtworkHovered(true)
+              }}
+              onPointerLeave={() => setArtworkHovered(false)}
               href={projectLink}
               target="_blank"
               rel="noopener noreferrer"
