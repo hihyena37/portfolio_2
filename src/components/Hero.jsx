@@ -1,7 +1,12 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
+
 import Mascot from './Mascot'
 import './Hero.css'
+
+gsap.registerPlugin(ScrollTrigger, MotionPathPlugin)
 
 const Hero = ({ entered }) => {
   const heroRef = useRef(null)
@@ -9,71 +14,18 @@ const Hero = ({ entered }) => {
   const mascotRef = useRef(null)
   const floatRef = useRef(null)
   const hintRef = useRef(null)
+  const doorRef = useRef(null)
+
+  const leftTextRef = useRef(null)
+  const rightTextRef = useRef(null)
+  const bottomTextRef = useRef(null)
+  const eyebrowRef = useRef(null)
+  const descRef = useRef(null)
 
   useEffect(() => {
     if (!entered) return
 
-    const tl = gsap.timeline()
-
-    tl.fromTo(
-      heroRef.current,
-      {
-        autoAlpha: 0,
-        scale: 1.06,
-      },
-      {
-        autoAlpha: 1,
-        scale: 1,
-        duration: 1.2,
-        ease: 'power2.out',
-      }
-    )
-
-    .fromTo(
-      contentRef.current,
-      {
-        autoAlpha: 0,
-        y: 40,
-      },
-      {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.8,
-        ease: 'power3.out',
-      },
-      '-=0.6'
-    )
-
-    .fromTo(
-      mascotRef.current,
-      {
-        autoAlpha: 0,
-        scale: 0.5,
-        rotation: -20,
-      },
-      {
-        autoAlpha: 1,
-        scale: 1,
-        rotation: 0,
-        duration: 0.8,
-        ease: 'back.out(1.5)',
-      },
-      '-=0.4'
-    )
-
-    .fromTo(
-      hintRef.current,
-      {
-        autoAlpha: 0,
-        y: 20,
-      },
-      {
-        autoAlpha: 1,
-        y: 0,
-        duration: 0.5,
-      },
-      '-=0.3'
-    )
+    let scrollTl
 
     const floating = gsap.to(floatRef.current, {
       y: -12,
@@ -85,31 +37,238 @@ const Hero = ({ entered }) => {
       paused: true,
     })
 
-    tl.eventCallback('onComplete', () => {
-      floating.play()
+    const createScrollAnimation = () => {
+      const star = mascotRef.current
+      const door = doorRef.current
+
+      const getPath = () => {
+        const starRect = star.getBoundingClientRect()
+        const doorRect = door.getBoundingClientRect()
+
+        const startX = starRect.left + starRect.width / 2
+        const startY = starRect.top + starRect.height / 2
+
+        const endX = doorRect.left + doorRect.width / 2
+        const endY = doorRect.top - starRect.height / 2 - 12
+
+        const dx = endX - startX
+        const dy = endY - startY
+
+        return [
+          { x: 0, y: 0 },
+          {
+            x: dx + Math.min(window.innerWidth * 0.22, 240),
+            y: dy * 0.25,
+          },
+          {
+            x: dx + Math.min(window.innerWidth * 0.18, 190),
+            y: dy * 0.7,
+          },
+          { x: dx, y: dy },
+        ]
+      }
+
+      scrollTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: heroRef.current,
+          start: 'top top',
+          end: '+=1800',
+          pin: true,
+          scrub: 1,
+          anticipatePin: 1,
+          invalidateOnRefresh: true,
+
+          onUpdate: (self) => {
+            if (self.progress > 0.001) {
+              floating.pause()
+            } else {
+              floating.resume()
+            }
+          },
+        },
+      })
+
+      scrollTl
+        .to(
+          leftTextRef.current,
+          {
+            x: '-35vw',
+            autoAlpha: 0,
+            duration: 0.4,
+            ease: 'none',
+          },
+          0
+        )
+        .to(
+          rightTextRef.current,
+          {
+            x: '35vw',
+            autoAlpha: 0,
+            duration: 0.4,
+            ease: 'none',
+          },
+          0
+        )
+        .to(
+          [
+            eyebrowRef.current,
+            bottomTextRef.current,
+            descRef.current,
+          ],
+          {
+            y: 65,
+            autoAlpha: 0,
+            duration: 0.35,
+            ease: 'none',
+          },
+          0
+        )
+        .to(
+          hintRef.current,
+          {
+            autoAlpha: 0,
+            duration: 0.2,
+          },
+          0
+        )
+        .to(
+          doorRef.current,
+          {
+            autoAlpha: 1,
+            duration: 0.3,
+          },
+          0.2
+        )
+        .to(
+          mascotRef.current,
+          {
+            motionPath: {
+              path: getPath,
+              curviness: 1.5,
+            },
+            duration: 0.75,
+            ease: 'none',
+          },
+          0.1
+        )
+        .to(
+          mascotRef.current,
+          {
+            rotation: 360,
+            duration: 0.75,
+            ease: 'none',
+          },
+          0.1
+        )
+        .to(
+          mascotRef.current,
+          {
+            scale: 0.85,
+            duration: 0.15,
+            ease: 'power2.out',
+          },
+          0.85
+        )
+        .to(
+          {},
+          {
+            duration: 0.2,
+          }
+        )
+
+      ScrollTrigger.refresh()
+    }
+
+    const introTl = gsap.timeline({
+      onComplete: () => {
+        floating.play()
+        createScrollAnimation()
+      },
     })
 
+    introTl
+      .fromTo(
+        heroRef.current,
+        {
+          autoAlpha: 0,
+          scale: 1.06,
+        },
+        {
+          autoAlpha: 1,
+          scale: 1,
+          duration: 1.2,
+          ease: 'power2.out',
+        }
+      )
+      .fromTo(
+        contentRef.current,
+        {
+          autoAlpha: 0,
+          y: 40,
+        },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+        },
+        '-=0.6'
+      )
+      .fromTo(
+        mascotRef.current,
+        {
+          autoAlpha: 0,
+          scale: 0.5,
+          rotation: -20,
+        },
+        {
+          autoAlpha: 1,
+          scale: 1,
+          rotation: 0,
+          duration: 0.8,
+          ease: 'back.out(1.5)',
+        },
+        '-=0.4'
+      )
+      .fromTo(
+        hintRef.current,
+        {
+          autoAlpha: 0,
+          y: 20,
+        },
+        {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.5,
+        },
+        '-=0.3'
+      )
+
     return () => {
-      tl.kill()
+      introTl.kill()
       floating.kill()
+      scrollTl?.scrollTrigger?.kill()
+      scrollTl?.kill()
     }
   }, [entered])
 
   return (
     <section className="hero" ref={heroRef}>
+
       <header className="hero-header">
         <span>HYENA'S EXHIBITION</span>
         <span>2026 PORTFOLIO</span>
       </header>
 
       <div className="hero-content" ref={contentRef}>
-        <p className="hero-eyebrow">
+        <p className="hero-eyebrow" ref={eyebrowRef}>
           WELCOME TO
         </p>
 
         <div className="hero-title">
           <div className="hero-title-row">
-            <span>MY</span>
+
+            <span ref={leftTextRef}>MY</span>
 
             <div className="hero-mascot" ref={mascotRef}>
               <div className="mascot-float" ref={floatRef}>
@@ -117,23 +276,36 @@ const Hero = ({ entered }) => {
               </div>
             </div>
 
-            <span>DIGITAL</span>
+            <span ref={rightTextRef}>DIGITAL</span>
+
           </div>
 
-          <div className="hero-title-bottom">
+          <div className="hero-title-bottom" ref={bottomTextRef}>
             EXHIBITION.
           </div>
         </div>
 
-        <p className="hero-desc">
+        <p className="hero-desc" ref={descRef}>
           Designing Ideas, Creating Experiences.
         </p>
+      </div>
+
+      <div className="hero-door" ref={doorRef}>
+        <div className="hero-door__top">
+          EXHIBITION HALL
+        </div>
+
+        <div className="hero-door__frame">
+          <div className="hero-door__left" />
+          <div className="hero-door__right" />
+        </div>
       </div>
 
       <div className="hero-scroll" ref={hintRef}>
         <span>SCROLL TO ENTER</span>
         <span className="scroll-arrow">↓</span>
       </div>
+
     </section>
   )
 }

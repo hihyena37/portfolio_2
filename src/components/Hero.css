@@ -243,3 +243,98 @@
     font-size: 10px;
   }
 }
+
+/* =========================
+   SCROLL ANIMATION
+========================= */
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+.hero-mascot {
+  z-index: 5;
+}
+
+
+/* =========================
+   EXHIBITION DOOR
+========================= */
+
+.hero-door {
+  position: absolute;
+  left: 50%;
+  bottom: 10vh;
+
+  transform: translateX(-50%);
+
+  width: 220px;
+  z-index: 1;
+
+  opacity: 0;
+  visibility: hidden;
+}
+
+.hero-door__top {
+  margin-bottom: 12px;
+
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+
+  color: #6d4dff;
+}
+
+.hero-door__frame {
+  display: flex;
+  width: 100%;
+  height: 155px;
+
+  border: 8px solid #d8cff0;
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+
+  overflow: hidden;
+
+  background: #e9e3f5;
+}
+
+.hero-door__left,
+.hero-door__right {
+  width: 50%;
+  height: 100%;
+
+  background: #a58ae8;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.hero-door__left {
+  border-right: 2px solid #7b5ccc;
+}
+
+.hero-door__right {
+  border-left: 2px solid #7b5ccc;
+}
+
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 767px) {
+  .hero-door {
+    width: 155px;
+    bottom: 12vh;
+  }
+
+  .hero-door__frame {
+    height: 115px;
+    border-width: 6px;
+  }
+
+  .hero-door__top {
+    font-size: 9px;
+  }
+}

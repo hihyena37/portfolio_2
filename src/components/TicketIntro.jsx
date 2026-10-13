@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import './TicketIntro.css'
 
-const TicketIntro = ({ onEnter }) => {
+const TicketIntro = ({ setEntered }) => {
   const ticketRef = useRef(null)
   const bodyRef = useRef(null)
   const stubRef = useRef(null)
@@ -68,7 +68,7 @@ const TicketIntro = ({ onEnter }) => {
 
     const tl = gsap.timeline({
       onStart: () => {
-        onEnter?.()
+        setEntered(true)
       },
       onComplete: () => {
         setHidden(true)
