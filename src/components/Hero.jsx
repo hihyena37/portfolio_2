@@ -41,8 +41,32 @@ const Hero = ({ entered, onBackToStart }) => {
   const eyebrowRef = useRef(null)
   const descRef = useRef(null)
 
+  // Jump to the settled end of the pinned scroll range without replaying the scrub.
+  const settleGalleryScroll = () => {
+    const galleryScroll = ScrollTrigger.getAll().find((trigger) => trigger.trigger === heroRef.current)
+    if (!galleryScroll) return
+    galleryScroll.scroll(galleryScroll.end)
+    galleryScroll.getTween()?.progress(1)
+    galleryScroll.animation.totalProgress(1)
+    ScrollTrigger.update()
+    return galleryScroll
+  }
+
   useEffect(() => {
-    if (exhibitionEnded) endingTitleRef.current?.focus({ preventScroll: true })
+    if (!exhibitionEnded) return
+    // The ending sits at the pin's end. A short upward scroll leaves it and returns
+    // to the gallery, so the rest of the pinned range reverses as before.
+    const galleryScroll = settleGalleryScroll()
+    endingTitleRef.current?.focus({ preventScroll: true })
+    if (!galleryScroll) return
+    const leaveOnScrollUp = () => {
+      if (window.scrollY >= galleryScroll.end - 60) return
+      setTransitionTarget(null)
+      setExhibitionEnded(false)
+      window.requestAnimationFrame(() => galleryRef.current?.querySelector('.gallery-artwork')?.focus({ preventScroll: true }))
+    }
+    window.addEventListener('scroll', leaveOnScrollUp, { passive: true })
+    return () => window.removeEventListener('scroll', leaveOnScrollUp)
   }, [exhibitionEnded])
 
   useEffect(() => {
@@ -707,14 +731,8 @@ const Hero = ({ entered, onBackToStart }) => {
               </div>
             </section>
             <button type="button" onClick={() => {
-              // Restart in the settled gallery, even if the ending was scrolled upward.
-              const galleryScroll = ScrollTrigger.getAll().find((trigger) => trigger.trigger === heroRef.current)
-              if (galleryScroll) {
-                galleryScroll.scroll(galleryScroll.end)
-                galleryScroll.getTween()?.progress(1)
-                galleryScroll.animation.totalProgress(1)
-                ScrollTrigger.update()
-              }
+              // Restart in the settled gallery.
+              settleGalleryScroll()
               setGalleryReady(true)
               setActiveProject(0)
               setTransitionTarget(null)

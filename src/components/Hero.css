@@ -898,7 +898,7 @@
   border-top: 1px solid rgb(90 75 62 / 22%);
 }
 
-.gallery-contact h3 { margin: 0 0 10px; font-size: 22px; letter-spacing: 0.06em; }
+.gallery-contact h3 { margin: 0 0 18px; font-size: 22px; letter-spacing: 0.06em; }
 .gallery-contact p { margin: 0; font-size: 18px; line-height: 1.7; word-break: keep-all; }
 
 .gallery-contact__links {
@@ -906,7 +906,7 @@
   width: fit-content;
   max-width: 100%;
   gap: 8px;
-  margin: 16px auto 0;
+  margin: 28px auto 0;
   text-align: left;
 }
 
@@ -955,6 +955,43 @@
 
 .gallery-ending button:hover { background: #fff0d9; }
 .gallery-ending button:focus-visible { outline: 2px solid #6d4dff; outline-offset: 4px; }
+
+/* PC: fit the whole ending in one viewport by scaling with its height. */
+@media (min-width: 768px) {
+  .gallery-ending {
+    padding: clamp(8px, 2dvh, 24px) 20px clamp(12px, 3dvh, 40px);
+  }
+
+  .gallery-ending__eyebrow { margin-bottom: clamp(6px, 1.6dvh, 20px); }
+
+  .gallery-ending__mascot {
+    width: clamp(48px, 11dvh, 120px);
+    margin-bottom: clamp(6px, 2dvh, 24px);
+  }
+
+  .gallery-ending h2 { font-size: clamp(28px, min(5vw, 7dvh), 72px); }
+
+  .gallery-ending__message { margin: clamp(8px, 2dvh, 24px) 0 clamp(10px, 2.5dvh, 32px); }
+
+  .gallery-contact {
+    width: min(100%, 760px);
+    padding: clamp(10px, 2dvh, 20px) 0;
+    margin-bottom: clamp(10px, 2.5dvh, 24px);
+  }
+
+  .gallery-contact__links {
+    grid-template-columns: repeat(3, minmax(0, auto));
+    margin-top: clamp(16px, 3dvh, 28px);
+  }
+
+  .gallery-contact__links a {
+    grid-template-columns: none;
+    justify-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    text-align: center;
+  }
+}
 
 @keyframes gallery-ending-in {
   from { opacity: 0; }
