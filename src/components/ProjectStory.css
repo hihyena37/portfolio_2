@@ -66,7 +66,7 @@
 
 .project-story__summary {
   margin: 24px 0;
-  font-size: 15px;
+  font-size: 20px;
   line-height: 1.8;
   word-break: keep-all;
 }
@@ -77,11 +77,11 @@
 
 .project-story__details div {
   display: grid;
-  grid-template-columns: 80px 1fr;
+  grid-template-columns: 110px 1fr;
   gap: 16px;
-  padding: 12px 0;
+  padding: 14px 0;
   border-bottom: 1px solid #e6ded2;
-  font-size: 13px;
+  font-size: 17px;
   line-height: 1.6;
 }
 
@@ -95,15 +95,15 @@
 
 .project-story__link {
   display: inline-block;
-  padding: 12px 16px;
+  padding: 14px 20px;
   background: #39313d;
   color: #fffdf8;
-  font-size: 13px;
+  font-size: 16px;
   text-decoration: none;
 }
 
 .project-story__new-tab {
-  font-size: 11px;
+  font-size: 13px;
 }
 
 .project-story :focus-visible {
