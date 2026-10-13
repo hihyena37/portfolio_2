@@ -10,7 +10,7 @@ import './Hero.css'
 
 gsap.registerPlugin(ScrollTrigger, MotionPathPlugin)
 
-const Hero = ({ entered }) => {
+const Hero = ({ entered, onBackToStart }) => {
   const [storyOpen, setStoryOpen] = useState(false)
   const [activeProject, setActiveProject] = useState(0)
   const [transitionTarget, setTransitionTarget] = useState(null)
@@ -520,7 +520,7 @@ const Hero = ({ entered }) => {
         </div>
       </div>
 
-      <div className="gallery-scene" ref={galleryRef} inert={!galleryReady}
+      <div className="gallery-scene" ref={galleryRef} inert={!galleryReady && !exhibitionEnded}
         role="region" aria-label="작품 전시 슬라이드"
         onKeyDown={(event) => {
           if (exhibitionEnded) return
@@ -536,7 +536,21 @@ const Hero = ({ entered }) => {
 
         <div className="gallery-scene__header">
           <span>HYENA'S EXHIBITION</span>
-          <span>{exhibitionEnded ? 'END OF EXHIBITION' : `GALLERY ${project.number} / ${project.category}`}</span>
+          <nav className="gallery-header-actions" aria-label="전시 메뉴">
+            <button type="button" onClick={onBackToStart} aria-label="티켓 인트로로 돌아가기">
+              <span className="gallery-start-full">BACK TO </span>START ↺
+            </button>
+            <button type="button" className="gallery-connect-button" onClick={() => {
+              setTransitionTarget(null)
+              setExhibitionEnded(true)
+              window.requestAnimationFrame(() => {
+                const contact = galleryRef.current?.querySelector('#gallery-contact-title')
+                contact?.focus({ preventScroll: true })
+                const ending = galleryRef.current?.querySelector('.gallery-ending')
+                if (ending) ending.scrollTop = ending.scrollHeight
+              })
+            }}>CONNECT ↗</button>
+          </nav>
         </div>
 
         <div className="gallery-hanging" ref={frameRef}
@@ -683,7 +697,7 @@ const Hero = ({ entered }) => {
             <h2 ref={endingTitleRef} tabIndex={-1}>THANK YOU<br />FOR VISITING!</h2>
             <p className="gallery-ending__message">전시를 끝까지 관람해 주셔서 감사합니다.</p>
             <section className="gallery-contact" aria-labelledby="gallery-contact-title">
-              <h3 id="gallery-contact-title">LET’S CONNECT</h3>
+              <h3 id="gallery-contact-title" tabIndex={-1}>LET’S CONNECT</h3>
               <p>함께 만들고 싶은 이야기가 있다면 연락해 주세요.</p>
               <div className="gallery-contact__links">
                 <a href="mailto:hihyena37@gmail.com"><span>EMAIL</span>hihyena37@gmail.com</a>
@@ -693,6 +707,15 @@ const Hero = ({ entered }) => {
               </div>
             </section>
             <button type="button" onClick={() => {
+              // Restart in the settled gallery, even if the ending was scrolled upward.
+              const galleryScroll = ScrollTrigger.getAll().find((trigger) => trigger.trigger === heroRef.current)
+              if (galleryScroll) {
+                galleryScroll.scroll(galleryScroll.end)
+                galleryScroll.getTween()?.progress(1)
+                galleryScroll.animation.totalProgress(1)
+                ScrollTrigger.update()
+              }
+              setGalleryReady(true)
               setActiveProject(0)
               setTransitionTarget(null)
               setArtworkHovered(false)
