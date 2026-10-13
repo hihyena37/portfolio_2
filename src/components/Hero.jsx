@@ -27,6 +27,7 @@ const Hero = ({ entered, onBackToStart }) => {
   const [autoPaused, setAutoPaused] = useState(false)
   const [artworkHovered, setArtworkHovered] = useState(false)
   const [artworkFocused, setArtworkFocused] = useState(false)
+  const [artworkHolding, setArtworkHolding] = useState(false)
   const [emailCopied, setEmailCopied] = useState(false)
   const emailCopiedTimer = useRef(null)
 
@@ -603,7 +604,7 @@ const Hero = ({ entered, onBackToStart }) => {
         </div>
       </div>
 
-      <div className={`gallery-scene${artworkHovered ? ' gallery-scene--spotlit' : ''}`} ref={galleryRef} inert={!galleryReady && !exhibitionEnded}
+      <div className={`gallery-scene${artworkHovered ? ' gallery-scene--spotlit' : ''}${artworkHolding && transitionTarget === null && !exhibitionEnded ? ' gallery-scene--holding' : ''}`} ref={galleryRef} inert={!galleryReady && !exhibitionEnded}
         role="region" aria-label="작품 전시 슬라이드"
         onKeyDown={(event) => {
           if (exhibitionEnded) return
@@ -638,7 +639,8 @@ const Hero = ({ entered, onBackToStart }) => {
 
         <div className="gallery-hanging" ref={frameRef}
           style={exhibitionEnded ? { display: 'none' } : undefined}
-          onFocusCapture={() => setArtworkFocused(true)}
+          // Only keyboard focus pauses the drift; the replay button's programmatic focus must not.
+          onFocusCapture={(event) => setArtworkFocused(event.target.matches(':focus-visible'))}
           onBlurCapture={(event) => {
             if (!event.currentTarget.contains(event.relatedTarget)) setArtworkFocused(false)
           }}
@@ -676,7 +678,14 @@ const Hero = ({ entered, onBackToStart }) => {
             inert={offset === 1}
             aria-hidden={offset === 1 ? true : undefined}
             style={{ animationPlayState: !galleryReady || storyOpen || aboutOpen || (!manual && (autoPaused || artworkHovered || artworkFocused)) ? 'paused' : 'running' }}
+            onAnimationStart={(event) => {
+              if (offset === 0 && event.target === event.currentTarget && event.animationName === 'gallery-hold') setArtworkHolding(true)
+            }}
             onAnimationEnd={(event) => {
+              if (event.animationName === 'gallery-hold') {
+                if (offset === 0 && event.target === event.currentTarget) setArtworkHolding(false)
+                return
+              }
               if (offset === 0 && event.target === event.currentTarget) {
                 if (transitionTarget === null && activeProject === galleryProjects.length - 1) {
                   setExhibitionEnded(true)
@@ -809,6 +818,7 @@ const Hero = ({ entered, onBackToStart }) => {
               setTransitionTarget(null)
               setArtworkHovered(false)
               setArtworkFocused(false)
+              setArtworkHolding(false)
               setExhibitionEnded(false)
               window.requestAnimationFrame(() => galleryRef.current?.querySelector('.gallery-artwork')?.focus({ preventScroll: true }))
             }}>전시 다시 보기 <span aria-hidden="true">↗</span></button>

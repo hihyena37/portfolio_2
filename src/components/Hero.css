@@ -470,6 +470,21 @@
   opacity: 1;
 }
 
+/* Touch screens can't hover, so the artwork is spotlit while it holds still. */
+@media (max-width: 767px) {
+  .gallery-scene--holding::before {
+    opacity: 1;
+  }
+
+  .gallery-scene--holding .gallery-spotlight__beam::after {
+    opacity: 1;
+  }
+
+  .gallery-scene--holding .gallery-spotlight__head {
+    box-shadow: 0 6px 14px rgb(255 243 213 / 95%);
+  }
+}
+
 .gallery-spotlight__beam::after {
   content: '';
   position: absolute;
@@ -748,8 +763,13 @@
   min-width: 0;
   position: relative;
   isolation: isolate;
-  animation: gallery-drift 8s linear both;
+  /* gallery-hold marks the still part of the drift; it shares the drift's play state. */
+  animation: gallery-drift 8s linear both, gallery-hold 3s linear;
   will-change: transform, opacity;
+}
+
+@keyframes gallery-hold {
+  0%, 100% { visibility: visible; }
 }
 
 .gallery-slide--incoming {
