@@ -32,8 +32,9 @@ const Hero = ({ entered, onBackToStart }) => {
 
   useEffect(() => () => window.clearTimeout(emailCopiedTimer.current), [])
 
-  // The mascot cursor and sparkle trail distract from the framed artworks, so use the plain cursor there.
-  const viewingArtworks = (galleryVisible || galleryReady) && !exhibitionEnded
+  // The mascot cursor and sparkle trail distract from the framed artworks, so use the plain cursor there
+  // (the About room keeps the full cursor effects).
+  const viewingArtworks = (galleryVisible || galleryReady) && !exhibitionEnded && !aboutOpen
   useEffect(() => {
     if (!viewingArtworks) return
     document.documentElement.dataset.cursor = 'plain'

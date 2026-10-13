@@ -129,20 +129,24 @@
   box-shadow: 0 18px 40px rgba(65, 47, 35, 0.08);
 }
 
+/* 티켓 인트로의 캐릭터 배지와 같은 주황 원 배경 */
 .about-profile__portrait {
+  display: grid;
+  place-items: center;
   margin: 0;
-  padding: 12px;
-  background: #b78d60;
-  border: 3px solid #987044;
-  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.25);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  /* 캐릭터가 잘 보이도록 원 배경만 살짝 투명하게 (#ff834e, 70%) */
+  background: rgba(255, 131, 78, 0.7);
+  box-shadow:
+    inset 0 6px 12px rgba(255, 255, 255, 0.26),
+    inset 0 -8px 12px rgba(0, 0, 0, 0.08);
 }
 
 .about-profile__portrait img {
-  width: 100%;
-  aspect-ratio: 1;
+  width: 92%;
+  height: auto;
   object-fit: contain;
-  padding: 12%;
-  background: #f3eee6;
 }
 
 .about-profile__role {
@@ -178,32 +182,17 @@
   word-break: keep-all;
 }
 
-/* 02. ABOUT ME */
-.about-text {
-  display: grid;
-  gap: 28px;
-}
-
-.about-text h4,
 .about-card h4 {
   margin: 0 0 10px;
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 700;
 }
 
-.about-text p {
-  margin: 0;
-  color: #4b4450;
-  font-size: 15px;
-  line-height: 1.8;
-  word-break: keep-all;
-}
-
-/* 03, 04. 정보 카드 */
+/* 02, 03. 정보 카드 */
 .about-records {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  grid-template-columns: 1fr;
+  gap: 20px;
 }
 
 .about-card {
@@ -224,28 +213,32 @@
 
 .about-card h4 span {
   color: #77716d;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 500;
   letter-spacing: 0;
 }
 
-.about-card ul {
+.about-skills {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 20px 24px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.about-card li {
-  padding: 8px 14px;
-  border: 1px solid #d7ccff;
-  border-radius: 999px;
-  color: #4a33c2;
-  background: #f4f0ff;
-  font-size: 14px;
-  font-weight: 600;
+.about-skills li {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+}
+
+/* 아이콘마다 원본 비율이 달라 정사각 영역 안에 비율 그대로 맞춥니다. */
+.about-skills img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .about-card > p {
@@ -260,22 +253,28 @@
 }
 
 .about-timeline li {
-  padding: 0 0 16px 16px;
+  padding: 0 0 20px 20px;
   border-left: 2px solid #d7ccff;
-  font-size: 14px;
+  font-size: 17px;
   line-height: 1.6;
+}
+
+.about-timeline li:last-child {
+  padding-bottom: 0;
 }
 
 .about-timeline__period {
   display: block;
+  margin-bottom: 2px;
   color: #6d4dff;
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 700;
 }
 
 .about-timeline p {
   margin: 4px 0 0;
   color: #4b4450;
+  font-size: 15px;
 }
 
 .about-pending {
@@ -295,12 +294,6 @@
 @keyframes about-zoom-in {
   from { opacity: 0; transform: scale(0.96); }
   to { opacity: 1; transform: scale(1); }
-}
-
-@media (max-width: 1024px) {
-  .about-records {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 767px) {
@@ -344,6 +337,15 @@
 
   .about-card {
     padding: 20px;
+  }
+
+  .about-skills {
+    gap: 16px;
+  }
+
+  .about-skills li {
+    width: 48px;
+    height: 48px;
   }
 }
 

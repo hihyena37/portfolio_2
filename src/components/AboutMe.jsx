@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
+import SparkleCursor from './SparkleCursor'
 import './AboutMe.css'
 
 // 확인되지 않은 내용은 null로 두고 화면에 '내용 준비 중'으로 표시합니다.
@@ -10,18 +11,49 @@ const artist = {
   role: 'Web Publisher & Design',
   photo: 'hn1.png',
   intro: null, // 한 줄 자기소개
-  story: null, // 디자인을 배우고 웹 구현까지 확장해 온 과정
-  approach: null, // 작업 방식과 강점
 }
 
-const skills = ['Figma', 'Photoshop', 'Illustrator', 'HTML', 'CSS', 'JavaScript', 'React']
+// 아이콘 파일은 public 폴더에 있으며, 파일명 대소문자를 그대로 맞춰야 합니다.
+const skills = [
+  { name: 'Photoshop', icon: 'ps.png' },
+  { name: 'Illustrator', icon: 'ai.png' },
+  { name: 'Figma', icon: 'figma.png' },
+  { name: 'HTML', icon: 'html.png' },
+  { name: 'CSS', icon: 'css.png' },
+  { name: 'JavaScript', icon: 'js.png' },
+  { name: 'jQuery', icon: 'jq.png' },
+  { name: 'GitHub', icon: 'GitHub.png' },
+  { name: 'Git', icon: 'git.png' },
+  { name: 'Codex', icon: 'codex.png' },
+  { name: 'Claude', icon: 'claude.png' },
+  { name: 'React', icon: 'react.png' },
+]
 
 // 각 항목은 { period, title, detail } 형태로 추가합니다.
 const records = [
-  { title: 'EDUCATION', label: '학력', items: [] },
-  { title: 'TRAINING', label: '관련 교육', items: [] },
-  { title: 'EXPERIENCE', label: '경력', items: [] },
-  { title: 'CERTIFICATES', label: '자격증', items: [] },
+  {
+    title: 'EDUCATION',
+    label: '학력',
+    items: [
+      { period: '2016', title: '구미여자고등학교 졸업' },
+      { period: '2024', title: '대구가톨릭대학교 디지털디자인과 졸업' },
+    ],
+  },
+  {
+    title: 'TRAINING',
+    label: '관련 교육',
+    items: [
+      { period: '2025.07 ~ 2026.02', title: 'SBS아카데미컴퓨터아트학원', detail: '웹디자인과정 수업 이수' },
+      { period: '2026.05 ~ 2026.10', title: 'SBS아카데미컴퓨터아트학원', detail: '웹퍼블리셔 과정 국비 수업 이수' },
+    ],
+  },
+  {
+    title: 'CERTIFICATES',
+    label: '자격증',
+    items: [
+      { period: '2025.12', title: '웹디자인개발기능사 취득' },
+    ],
+  },
 ]
 
 const Pending = ({ children = '내용 준비 중' }) => (
@@ -55,6 +87,8 @@ const AboutMe = ({ onClose }) => {
       aria-labelledby="about-me-title"
       onClose={onClose}
     >
+      {/* The modal sits in the top layer above the page-level trail, so it needs its own. */}
+      <SparkleCursor />
       <div className="about-me__bar">
         <span>HYENA'S EXHIBITION / ARTIST ROOM</span>
         <button type="button" onClick={() => dialogRef.current.close()} autoFocus>
@@ -88,34 +122,24 @@ const AboutMe = ({ onClose }) => {
           </div>
         </section>
 
-        <section className="about-section" aria-labelledby="about-story-title">
-          <p className="about-section__number">02</p>
-          <h3 id="about-story-title" className="about-section__title">ABOUT ME</h3>
-          <div className="about-text">
-            <div>
-              <h4>디자인에서 웹 구현까지</h4>
-              <p>{artist.story ?? <Pending />}</p>
-            </div>
-            <div>
-              <h4>작업 방식과 강점</h4>
-              <p>{artist.approach ?? <Pending />}</p>
-            </div>
-          </div>
-        </section>
-
         <section className="about-section" aria-labelledby="about-skills-title">
-          <p className="about-section__number">03</p>
+          <p className="about-section__number">02</p>
           <h3 id="about-skills-title" className="about-section__title">SKILLS</h3>
           <div className="about-card">
-            <ul>
-              {skills.map((item) => <li key={item}>{item}</li>)}
+            <ul className="about-skills">
+              {skills.map((skill) => (
+                <li key={skill.name} title={skill.name}>
+                  <img src={`${import.meta.env.BASE_URL}${skill.icon}`} alt={skill.name}
+                    loading="lazy" decoding="async" />
+                </li>
+              ))}
             </ul>
           </div>
         </section>
 
         <section className="about-section" aria-labelledby="about-records-title">
-          <p className="about-section__number">04</p>
-          <h3 id="about-records-title" className="about-section__title">EXPERIENCE &amp; EDUCATION</h3>
+          <p className="about-section__number">03</p>
+          <h3 id="about-records-title" className="about-section__title">EDUCATION &amp; CERTIFICATES</h3>
           <div className="about-records">
             {records.map((group) => (
               <div className="about-card" key={group.title}>
