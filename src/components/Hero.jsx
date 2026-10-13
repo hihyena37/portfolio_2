@@ -1,144 +1,138 @@
 import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
+import Mascot from './Mascot'
 import './Hero.css'
 
 const Hero = ({ entered }) => {
   const heroRef = useRef(null)
-  const eyebrowRef = useRef(null)
-  const titleRef = useRef(null)
-  const descRef = useRef(null)
-  const hintRef = useRef(null)
+  const contentRef = useRef(null)
   const mascotRef = useRef(null)
+  const floatRef = useRef(null)
+  const hintRef = useRef(null)
 
   useEffect(() => {
     if (!entered) return
 
     const tl = gsap.timeline()
 
-    tl
-      .fromTo(
-        heroRef.current,
-        {
-          autoAlpha: 0,
-          scale: 1.08,
-        },
-        {
-          autoAlpha: 1,
-          scale: 1,
-          duration: 1.2,
-          ease: 'power2.out',
-        }
-      )
-      .fromTo(
-        eyebrowRef.current,
-        {
-          autoAlpha: 0,
-          y: 18,
-        },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.45,
-        },
-        '-=0.55'
-      )
-      .fromTo(
-        titleRef.current,
-        {
-          autoAlpha: 0,
-          y: 30,
-        },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.65,
-          ease: 'power3.out',
-        },
-        '-=0.2'
-      )
-      .fromTo(
-        descRef.current,
-        {
-          autoAlpha: 0,
-          y: 18,
-        },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.45,
-        },
-        '-=0.35'
-      )
-      .fromTo(
-        hintRef.current,
-        {
-          autoAlpha: 0,
-          y: 14,
-        },
-        {
-          autoAlpha: 1,
-          y: 0,
-          duration: 0.45,
-        },
-        '-=0.2'
-      )
-      .fromTo(
-        mascotRef.current,
-        {
-          autoAlpha: 0,
-          y: 30,
-          scale: 0.94,
-        },
-        {
-          autoAlpha: 1,
-          y: 0,
-          scale: 1,
-          duration: 0.7,
-          ease: 'back.out(1.6)',
-        },
-        '-=0.3'
-      )
+    tl.fromTo(
+      heroRef.current,
+      {
+        autoAlpha: 0,
+        scale: 1.06,
+      },
+      {
+        autoAlpha: 1,
+        scale: 1,
+        duration: 1.2,
+        ease: 'power2.out',
+      }
+    )
 
-    return () => tl.kill()
+    .fromTo(
+      contentRef.current,
+      {
+        autoAlpha: 0,
+        y: 40,
+      },
+      {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+      },
+      '-=0.6'
+    )
+
+    .fromTo(
+      mascotRef.current,
+      {
+        autoAlpha: 0,
+        scale: 0.5,
+        rotation: -20,
+      },
+      {
+        autoAlpha: 1,
+        scale: 1,
+        rotation: 0,
+        duration: 0.8,
+        ease: 'back.out(1.5)',
+      },
+      '-=0.4'
+    )
+
+    .fromTo(
+      hintRef.current,
+      {
+        autoAlpha: 0,
+        y: 20,
+      },
+      {
+        autoAlpha: 1,
+        y: 0,
+        duration: 0.5,
+      },
+      '-=0.3'
+    )
+
+    const floating = gsap.to(floatRef.current, {
+      y: -12,
+      rotation: 5,
+      duration: 2,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut',
+      paused: true,
+    })
+
+    tl.eventCallback('onComplete', () => {
+      floating.play()
+    })
+
+    return () => {
+      tl.kill()
+      floating.kill()
+    }
   }, [entered])
 
   return (
     <section className="hero" ref={heroRef}>
-      <div className="hero-bg-glow hero-bg-glow--left" />
-      <div className="hero-bg-glow hero-bg-glow--right" />
+      <header className="hero-header">
+        <span>HYENA'S EXHIBITION</span>
+        <span>2026 PORTFOLIO</span>
+      </header>
 
-      <div className="hero-inner">
-        <div className="hero-copy">
-          <p className="hero-eyebrow" ref={eyebrowRef}>
-            ADMIT ONE / DIGITAL EXHIBITION
-          </p>
+      <div className="hero-content" ref={contentRef}>
+        <p className="hero-eyebrow">
+          WELCOME TO
+        </p>
 
-          <h2 className="hero-title" ref={titleRef}>
-            WELCOME TO
-            <br />
-            MY EXHIBITION.
-          </h2>
+        <div className="hero-title">
+          <div className="hero-title-row">
+            <span>MY</span>
 
-          <p className="hero-desc" ref={descRef}>
-            Explore the works, discover the process,
-            <br />
-            and step into my digital gallery.
-          </p>
-
-          <p className="hero-hint" ref={hintRef}>
-            SCROLL TO EXPLORE
-          </p>
-        </div>
-
-        <div className="hero-mascot" ref={mascotRef}>
-          <div className="mascot-card">
-            <div className="mascot-face">
-              <span className="eye" />
-              <span className="eye" />
+            <div className="hero-mascot" ref={mascotRef}>
+              <div className="mascot-float" ref={floatRef}>
+                <Mascot />
+              </div>
             </div>
-            <p className="mascot-label">MASCOT</p>
+
+            <span>DIGITAL</span>
+          </div>
+
+          <div className="hero-title-bottom">
+            EXHIBITION.
           </div>
         </div>
+
+        <p className="hero-desc">
+          Designing Ideas, Creating Experiences.
+        </p>
+      </div>
+
+      <div className="hero-scroll" ref={hintRef}>
+        <span>SCROLL TO ENTER</span>
+        <span className="scroll-arrow">↓</span>
       </div>
     </section>
   )

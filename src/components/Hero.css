@@ -1,172 +1,245 @@
+/* =========================
+   HERO
+========================= */
+
 .hero {
   position: relative;
-  min-height: 100vh;
-  overflow: hidden;
-  background:
-    radial-gradient(circle at 20% 20%, rgba(255, 131, 78, 0.12), transparent 32%),
-    radial-gradient(circle at 82% 26%, rgba(109, 77, 255, 0.15), transparent 28%),
-    linear-gradient(180deg, #f8f6f1 0%, #f5f3ee 100%);
-  opacity: 0;
-  visibility: hidden;
-  transform: scale(1.08);
-  transform-origin: center center;
-}
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 500px;
 
-.hero-bg-glow {
-  position: absolute;
-  width: 32vw;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  filter: blur(80px);
-  opacity: 0.24;
-  pointer-events: none;
-}
-
-.hero-bg-glow--left {
-  top: -10%;
-  left: -6%;
-  background: rgba(255, 131, 78, 0.35);
-}
-
-.hero-bg-glow--right {
-  bottom: -10%;
-  right: -8%;
-  background: rgba(109, 77, 255, 0.28);
-}
-
-.hero-inner {
-  position: relative;
-  z-index: 1;
-  min-height: 100vh;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 5vw;
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  align-items: center;
-  gap: 48px;
-}
-
-.hero-copy {
-  max-width: 640px;
-}
-
-.hero-eyebrow {
-  margin: 0 0 20px;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  color: #6d4dff;
-  opacity: 0;
-}
-
-.hero-title {
-  margin: 0;
-  font-size: clamp(2.8rem, 8vw, 6.4rem);
-  line-height: 0.95;
-  letter-spacing: -0.05em;
-  color: #171320;
-  opacity: 0;
-}
-
-.hero-desc {
-  margin: 24px 0 0;
-  font-size: clamp(1rem, 1.6vw, 1.18rem);
-  line-height: 1.7;
-  color: #5f5a6f;
-  opacity: 0;
-}
-
-.hero-hint {
-  margin: 40px 0 0;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.22em;
-  color: #1f1b2d;
-  opacity: 0;
-}
-
-.hero-mascot {
-  display: flex;
-  justify-content: center;
-  opacity: 0;
-}
-
-.mascot-card {
-  width: clamp(200px, 26vw, 320px);
-  aspect-ratio: 1 / 1.08;
-  border-radius: 34px;
-  background:
-    radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.7), transparent 24%),
-    linear-gradient(160deg, #7b5cff 0%, #6d4dff 72%);
-  box-shadow:
-    0 28px 60px rgba(74, 52, 179, 0.22),
-    inset 0 10px 18px rgba(255, 255, 255, 0.16);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 18px;
+
+  overflow: hidden;
+
+  background: #f8f6f1;
+
+  opacity: 0;
+  visibility: hidden;
+  transform-origin: center center;
 }
 
-.mascot-face {
-  width: 54%;
-  height: 38%;
-  background: #fff;
-  border-radius: 999px;
+
+/* =========================
+   HEADER
+========================= */
+
+.hero-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  padding: 32px 5%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+
+  color: #25212b;
+}
+
+
+/* =========================
+   CONTENT
+========================= */
+
+.hero-content {
+  width: 100%;
+  padding: 0 5%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+}
+
+.hero-eyebrow {
+  margin: 0 0 16px;
+
+  font-size: clamp(32px, 5.5vw, 80px);
+  line-height: 1.1;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+
+  color: #25212b;
+}
+
+
+/* =========================
+   TITLE
+========================= */
+
+.hero-title {
+  width: 100%;
+  color: #25212b;
+
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  line-height: 1.05;
+}
+
+.hero-title-row {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 22px;
-  box-shadow: inset 0 8px 16px rgba(0, 0, 0, 0.05);
+
+  gap: clamp(12px, 2vw, 32px);
+
+  font-size: clamp(48px, 8vw, 128px);
+  white-space: nowrap;
 }
 
-.eye {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: #171320;
+.hero-title-bottom {
+  font-size: clamp(48px, 8vw, 128px);
 }
 
-.mascot-label {
-  margin: 0;
-  font-size: 0.82rem;
-  font-weight: 700;
-  letter-spacing: 0.18em;
-  color: #fff;
+
+/* =========================
+   MASCOT
+========================= */
+
+.hero-mascot {
+  position: relative;
+
+  width: clamp(60px, 9vw, 140px);
+  aspect-ratio: 1;
+
+  flex-shrink: 0;
+
+  transform-origin: center center;
+  will-change: transform;
 }
 
-@media (max-width: 900px) {
-  .hero-inner {
-    grid-template-columns: 1fr;
-    padding-top: 120px;
-    padding-bottom: 90px;
-    gap: 36px;
-  }
+.mascot-float {
+  width: 100%;
+  height: 100%;
+  will-change: transform;
+}
 
-  .hero-copy {
-    max-width: 100%;
+.mascot-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+
+  filter: drop-shadow(
+    0 12px 12px rgba(220, 145, 65, 0.18)
+  );
+}
+
+
+/* =========================
+   DESCRIPTION
+========================= */
+
+.hero-desc {
+  margin: 28px 0 0;
+
+  font-size: clamp(14px, 1.5vw, 18px);
+  font-weight: 400;
+  line-height: 1.6;
+
+  color: #77716d;
+}
+
+
+/* =========================
+   SCROLL
+========================= */
+
+.hero-scroll {
+  position: absolute;
+  bottom: 35px;
+  left: 50%;
+
+  transform: translateX(-50%);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 12px;
+
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+
+  color: #77716d;
+  white-space: nowrap;
+}
+
+.scroll-arrow {
+  font-size: 22px;
+  font-weight: 400;
+}
+
+
+/* =========================
+   TABLET
+========================= */
+
+@media (max-width: 1024px) {
+  .hero-title-row,
+  .hero-title-bottom {
+    font-size: clamp(42px, 7.8vw, 80px);
   }
 
   .hero-mascot {
-    justify-content: flex-start;
+    width: clamp(55px, 8vw, 95px);
   }
 }
+
+
+/* =========================
+   MOBILE
+========================= */
 
 @media (max-width: 767px) {
-  .hero-inner {
-    padding: 110px 22px 80px;
+  .hero-header {
+    padding: 24px 20px;
+    font-size: 10px;
   }
 
-  .hero-desc br {
-    display: none;
+  .hero-content {
+    padding: 0 16px;
   }
 
-  .hero-hint {
-    margin-top: 28px;
+  .hero-eyebrow {
+    margin-bottom: 20px;
+    font-size: clamp(28px, 7vw, 48px);
+  }
+
+  .hero-title-row {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+
+    font-size: clamp(30px, 8vw, 58px);
+  }
+
+  .hero-title-bottom {
+    font-size: clamp(30px, 8vw, 58px);
   }
 
   .hero-mascot {
-    justify-content: center;
+    width: clamp(42px, 12vw, 70px);
+  }
+
+  .hero-desc {
+    margin-top: 24px;
+    font-size: 13px;
+  }
+
+  .hero-scroll {
+    bottom: 28px;
+    font-size: 10px;
   }
 }

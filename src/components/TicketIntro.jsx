@@ -156,7 +156,11 @@ const TicketIntro = ({ onEnter }) => {
             <div className="ticket-cut ticket-cut--bottom" />
 
             <div className="ticket-badge">
-              <span className="ticket-star">★</span>
+              <img
+                src={`${import.meta.env.BASE_URL}hn1.png`}
+                alt="성혜나 캐릭터"
+                className="ticket-character"
+              />
             </div>
 
             <div className="ticket-body__content">
