@@ -302,6 +302,10 @@
     font-size: 16px;
   }
 
+  .about-me__bar-room {
+    display: block;
+  }
+
   .about-me__bar button {
     padding: 8px 12px;
     font-size: 12px;

@@ -99,7 +99,7 @@ const AboutMe = ({ onClose }) => {
       {/* The modal sits in the top layer above the page-level trail, so it needs its own. */}
       <SparkleCursor />
       <div className="about-me__bar">
-        <span>HYENA'S EXHIBITION / ARTIST ROOM</span>
+        <span>HYENA'S EXHIBITION / <span className="about-me__bar-room">ARTIST ROOM</span></span>
         <button type="button" onClick={() => dialogRef.current.close()} autoFocus>
           CLOSE <span aria-hidden="true">×</span>
         </button>
