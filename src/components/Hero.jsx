@@ -14,6 +14,8 @@ const Hero = ({ entered }) => {
   const [storyOpen, setStoryOpen] = useState(false)
   const [activeProject, setActiveProject] = useState(0)
   const [transitionTarget, setTransitionTarget] = useState(null)
+  const [exhibitionEnded, setExhibitionEnded] = useState(false)
+  const endingTitleRef = useRef(null)
   const [galleryReady, setGalleryReady] = useState(false)
   const [autoPaused, setAutoPaused] = useState(false)
   const [artworkHovered, setArtworkHovered] = useState(false)
@@ -38,6 +40,10 @@ const Hero = ({ entered }) => {
   const bottomTextRef = useRef(null)
   const eyebrowRef = useRef(null)
   const descRef = useRef(null)
+
+  useEffect(() => {
+    if (exhibitionEnded) endingTitleRef.current?.focus({ preventScroll: true })
+  }, [exhibitionEnded])
 
   useEffect(() => {
     if (!entered) return
@@ -517,18 +523,24 @@ const Hero = ({ entered }) => {
       <div className="gallery-scene" ref={galleryRef} inert={!galleryReady}
         role="region" aria-label="작품 전시 슬라이드"
         onKeyDown={(event) => {
+          if (exhibitionEnded) return
           if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
             event.preventDefault()
+            if (event.key === 'ArrowRight' && activeProject === galleryProjects.length - 1 && transitionTarget === null) {
+              setExhibitionEnded(true)
+              return
+            }
             selectProject(activeProject + (event.key === 'ArrowRight' ? 1 : -1))
           }
         }}>
 
         <div className="gallery-scene__header">
           <span>HYENA'S EXHIBITION</span>
-          <span>GALLERY {project.number} / {project.category}</span>
+          <span>{exhibitionEnded ? 'END OF EXHIBITION' : `GALLERY ${project.number} / ${project.category}`}</span>
         </div>
 
         <div className="gallery-hanging" ref={frameRef}
+          style={exhibitionEnded ? { display: 'none' } : undefined}
           onFocusCapture={() => setArtworkFocused(true)}
           onBlurCapture={(event) => {
             if (!event.currentTarget.contains(event.relatedTarget)) setArtworkFocused(false)
@@ -557,6 +569,7 @@ const Hero = ({ entered }) => {
             }
           }}>
           {[0, 1].map((offset) => {
+            if (exhibitionEnded || (offset === 1 && transitionTarget === null && activeProject === galleryProjects.length - 1)) return null
             const manual = transitionTarget !== null
             const project = galleryProjects[offset === 0 ? activeProject : (transitionTarget ?? (activeProject + 1) % galleryProjects.length)]
             const projectLink = project.link.startsWith('https://')
@@ -568,7 +581,11 @@ const Hero = ({ entered }) => {
             style={{ animationPlayState: !galleryReady || storyOpen || (!manual && (autoPaused || artworkHovered || artworkFocused)) ? 'paused' : 'running' }}
             onAnimationEnd={(event) => {
               if (offset === 0 && event.target === event.currentTarget) {
-                setActiveProject((index) => transitionTarget ?? (index + 1) % galleryProjects.length)
+                if (transitionTarget === null && activeProject === galleryProjects.length - 1) {
+                  setExhibitionEnded(true)
+                } else {
+                  setActiveProject((index) => transitionTarget ?? index + 1)
+                }
                 setTransitionTarget(null)
               }
             }}>
@@ -634,11 +651,14 @@ const Hero = ({ entered }) => {
 
         </div>
 
-        <nav className="gallery-scene__footer gallery-navigation" aria-label="작품 선택">
+        <nav className="gallery-scene__footer gallery-navigation" aria-label="작품 선택"
+          style={exhibitionEnded ? { display: 'none' } : undefined}>
           <div className="gallery-navigation__row">
             <button type="button" disabled={activeProject === 0} onClick={() => selectProject(activeProject - 1)} aria-label="이전 작품">←</button>
             <span>{project.number} / {String(galleryProjects.length).padStart(2, '0')}</span>
-            <button type="button" disabled={activeProject === galleryProjects.length - 1} onClick={() => selectProject(activeProject + 1)} aria-label="다음 작품">→</button>
+            <button type="button" disabled={transitionTarget !== null}
+              onClick={() => activeProject === galleryProjects.length - 1 ? setExhibitionEnded(true) : selectProject(activeProject + 1)}
+              aria-label={activeProject === galleryProjects.length - 1 ? '전시 관람 마치기' : '다음 작품'}>→</button>
           </div>
           <div className="gallery-navigation__positions">
             {galleryProjects.map((item, index) => (
@@ -655,6 +675,33 @@ const Hero = ({ entered }) => {
             {autoPaused ? '재생' : '일시정지'}
           </button>
         </nav>
+
+        {exhibitionEnded && (
+          <div className="gallery-ending">
+            <p className="gallery-ending__eyebrow">UNTIL WE MEET AGAIN</p>
+            <div className="gallery-ending__mascot"><Mascot animated /></div>
+            <h2 ref={endingTitleRef} tabIndex={-1}>THANK YOU<br />FOR VISITING!</h2>
+            <p className="gallery-ending__message">전시를 끝까지 관람해 주셔서 감사합니다.</p>
+            <section className="gallery-contact" aria-labelledby="gallery-contact-title">
+              <h3 id="gallery-contact-title">LET’S CONNECT</h3>
+              <p>함께 만들고 싶은 이야기가 있다면 연락해 주세요.</p>
+              <div className="gallery-contact__links">
+                <a href="mailto:hihyena37@gmail.com"><span>EMAIL</span>hihyena37@gmail.com</a>
+                <a href="tel:+821062960440"><span>PHONE</span>010-6296-0440</a>
+                <a href="https://github.com/hihyena37" target="_blank" rel="noopener noreferrer"
+                  aria-label="GitHub hihyena37 (새 탭)"><span>GITHUB</span>hihyena37 ↗</a>
+              </div>
+            </section>
+            <button type="button" onClick={() => {
+              setActiveProject(0)
+              setTransitionTarget(null)
+              setArtworkHovered(false)
+              setArtworkFocused(false)
+              setExhibitionEnded(false)
+              window.requestAnimationFrame(() => galleryRef.current?.querySelector('.gallery-artwork')?.focus({ preventScroll: true }))
+            }}>전시 다시 보기 <span aria-hidden="true">↗</span></button>
+          </div>
+        )}
 
       </div>
 
