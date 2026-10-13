@@ -1,14 +1,25 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { MotionPathPlugin } from 'gsap/MotionPathPlugin'
 
 import Mascot from './Mascot'
+import ProjectStory from './ProjectStory'
+import { galleryProjects } from '../data/galleryProjects'
 import './Hero.css'
 
 gsap.registerPlugin(ScrollTrigger, MotionPathPlugin)
 
 const Hero = ({ entered }) => {
+  const [storyOpen, setStoryOpen] = useState(false)
+  const [activeProject, setActiveProject] = useState(0)
+  const [galleryReady, setGalleryReady] = useState(false)
+  const [slideDirection, setSlideDirection] = useState(1)
+  const [autoPaused, setAutoPaused] = useState(false)
+  const [artworkHovered, setArtworkHovered] = useState(false)
+  const swipeRef = useRef(null)
+  const suppressClickRef = useRef(false)
+  const project = galleryProjects[activeProject]
   const heroRef = useRef(null)
   const contentRef = useRef(null)
   const mascotRef = useRef(null)
@@ -26,6 +37,30 @@ const Hero = ({ entered }) => {
   const bottomTextRef = useRef(null)
   const eyebrowRef = useRef(null)
   const descRef = useRef(null)
+
+  useEffect(() => {
+    if (!entered) return
+    // Prepare lightweight previews during the entrance animation.
+    const previews = galleryProjects.map((item) => {
+      const image = new Image()
+      image.decoding = 'async'
+      image.src = import.meta.env.BASE_URL + item.preview
+      image.decode().catch(() => {})
+      return image
+    })
+    return () => previews.forEach((image) => { image.src = '' })
+  }, [entered])
+
+  useEffect(() => {
+    if (!galleryReady || storyOpen || autoPaused || artworkHovered) return
+
+    const timer = window.setTimeout(() => {
+      setSlideDirection(1)
+      setActiveProject((activeProject + 1) % galleryProjects.length)
+    }, 3000)
+
+    return () => window.clearTimeout(timer)
+  }, [galleryReady, storyOpen, autoPaused, artworkHovered, activeProject])
 
   useEffect(() => {
     if (!entered) return
@@ -74,10 +109,13 @@ const Hero = ({ entered }) => {
       }
 
       scrollTl = gsap.timeline({
+        onUpdate: function () {
+          setGalleryReady(this.time() >= 4.1)
+        },
         scrollTrigger: {
           trigger: heroRef.current,
           start: 'top top',
-          end: '+=4500',
+          end: '+=3000',
           pin: true,
           scrub: 1,
           anticipatePin: 1,
@@ -298,8 +336,7 @@ const Hero = ({ entered }) => {
           3.9
         )
 
-        // 작품을 감상할 수 있도록 잠시 유지
-        .to({}, { duration: 0.5 })
+        .to({}, { duration: 0.3 })
 
       ScrollTrigger.refresh()
     }
@@ -377,6 +414,15 @@ const Hero = ({ entered }) => {
     }
   }, [entered])
 
+  const selectProject = (index) => {
+    if (!galleryReady || index < 0 || index >= galleryProjects.length || index === activeProject) return
+    setSlideDirection(index > activeProject ? 1 : -1)
+    setActiveProject(index)
+  }
+
+  const projectLink = project.link.startsWith('https://')
+    ? project.link : import.meta.env.BASE_URL + project.link
+
   return (
     <section className="hero" ref={heroRef}>
 
@@ -441,56 +487,117 @@ const Hero = ({ entered }) => {
         </div>
       </div>
 
-      <div className="gallery-scene" ref={galleryRef}>
+      <div className="gallery-scene" ref={galleryRef} inert={!galleryReady}
+        role="region" aria-label="작품 전시 슬라이드"
+        onKeyDown={(event) => {
+          if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
+            event.preventDefault()
+            selectProject(activeProject + (event.key === 'ArrowRight' ? 1 : -1))
+          }
+        }}>
 
         <div className="gallery-scene__header">
           <span>HYENA'S EXHIBITION</span>
-          <span>GALLERY 01 / WEB REDESIGN</span>
+          <span>GALLERY {project.number} / {project.category}</span>
         </div>
 
-        <div className="gallery-hanging" ref={frameRef}>
+        <div className="gallery-hanging" ref={frameRef}
+          onPointerEnter={(event) => {
+            if (event.pointerType === 'mouse') setArtworkHovered(true)
+          }}
+          onPointerLeave={() => setArtworkHovered(false)}
+          onPointerDown={(event) => {
+            suppressClickRef.current = false
+            if (event.pointerType === 'touch') swipeRef.current = { x: event.clientX, y: event.clientY }
+          }}
+          onPointerUp={(event) => {
+            const start = swipeRef.current
+            swipeRef.current = null
+            if (!start) return
+            const dx = event.clientX - start.x
+            const dy = event.clientY - start.y
+            if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+              suppressClickRef.current = true
+              selectProject(activeProject + (dx < 0 ? 1 : -1))
+            }
+          }}
+          onPointerCancel={() => { swipeRef.current = null }}
+          onClickCapture={(event) => {
+            if (suppressClickRef.current) {
+              event.preventDefault()
+              event.stopPropagation()
+              suppressClickRef.current = false
+            }
+          }}>
+          <div className="gallery-slide" key={project.number}
+            style={{ '--slide-offset': slideDirection > 0 ? '48px' : '-48px' }}>
 
-          <div className="gallery-wires" aria-hidden="true">
-            <span className="gallery-wire" />
-            <span className="gallery-wire" />
-          </div>
-
-          <div className="gallery-artwork">
-            <div className="gallery-artwork__mat">
-              <div className="gallery-artwork__preview">
-                <span className="gallery-artwork__category">
-                  WEB REDESIGN
-                </span>
-
-                <strong>YP FOODS</strong>
-
-                <span className="gallery-artwork__subtitle">
-                  영풍 웹사이트 리디자인
-                </span>
-
-                <span className="gallery-artwork__placeholder">
-                  PROJECT PREVIEW
-                </span>
-              </div>
+            <div className="gallery-wires" aria-hidden="true">
+              <span className="gallery-wire" />
+              <span className="gallery-wire" />
             </div>
-          </div>
 
-          <div className="gallery-caption">
-            <span className="gallery-caption__number">
-              EXHIBIT 001
-            </span>
+            <a
+              className="gallery-artwork"
+              href={projectLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${project.name} ${project.viewLabel} (새 탭)`}
+            >
+              <div className="gallery-artwork__mat">
+                <div className="gallery-artwork__preview">
+                  <img
+                    src={`${import.meta.env.BASE_URL}${project.preview}`}
+                    decoding="async"
+                    alt={`${project.name} 작품 미리보기`}
+                  />
+                </div>
+              </div>
+            </a>
 
-            <h2>YP FOODS</h2>
+            <div className="gallery-caption">
+              <span className="gallery-caption__number">
+                EXHIBIT {project.exhibit}
+              </span>
 
-            <p>Website Renewal · UI/UX · Publishing</p>
+              <h2 aria-live="polite">{project.title}</h2>
+
+              <p>{project.caption}</p>
+              <button
+                className="gallery-story-button"
+                type="button"
+                aria-haspopup="dialog"
+                onClick={() => setStoryOpen(true)}
+              >
+                VIEW STORY ↗
+              </button>
+            </div>
+
           </div>
 
         </div>
 
-        <div className="gallery-scene__footer">
-          <span>01 — 09</span>
-          <span>SCROLL TO EXPLORE ↓</span>
-        </div>
+        <nav className="gallery-scene__footer gallery-navigation" aria-label="작품 선택">
+          <div className="gallery-navigation__row">
+            <button type="button" disabled={activeProject === 0} onClick={() => selectProject(activeProject - 1)} aria-label="이전 작품">←</button>
+            <span>{project.number} / {String(galleryProjects.length).padStart(2, '0')}</span>
+            <button type="button" disabled={activeProject === galleryProjects.length - 1} onClick={() => selectProject(activeProject + 1)} aria-label="다음 작품">→</button>
+          </div>
+          <div className="gallery-navigation__positions">
+            {galleryProjects.map((item, index) => (
+              <button key={item.number} type="button" aria-label={item.number + ' ' + item.name}
+                title={item.name} aria-current={index === activeProject ? 'true' : undefined}
+                onClick={() => selectProject(index)}>{item.number}</button>
+            ))}
+          </div>
+          <span className="gallery-navigation__name">{project.name}</span>
+          <button className="gallery-autoplay-button" type="button"
+            aria-label={autoPaused ? '작품 자동 넘기기 재생' : '작품 자동 넘기기 일시정지'}
+            aria-pressed={autoPaused} onClick={() => setAutoPaused(!autoPaused)}>
+            <span aria-hidden="true">{autoPaused ? '▶' : 'Ⅱ'}</span>
+            {autoPaused ? '재생' : '일시정지'}
+          </button>
+        </nav>
 
       </div>
 
@@ -498,6 +605,8 @@ const Hero = ({ entered }) => {
         <span>SCROLL TO ENTER</span>
         <span className="scroll-arrow">↓</span>
       </div>
+
+      {storyOpen && <ProjectStory project={project} onClose={() => setStoryOpen(false)} />}
 
     </section>
   )
