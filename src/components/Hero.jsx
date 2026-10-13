@@ -13,6 +13,7 @@ gsap.registerPlugin(ScrollTrigger, MotionPathPlugin)
 const Hero = ({ entered }) => {
   const [storyOpen, setStoryOpen] = useState(false)
   const [activeProject, setActiveProject] = useState(0)
+  const [transitionTarget, setTransitionTarget] = useState(null)
   const [galleryReady, setGalleryReady] = useState(false)
   const [autoPaused, setAutoPaused] = useState(false)
   const [artworkHovered, setArtworkHovered] = useState(false)
@@ -439,14 +440,15 @@ const Hero = ({ entered }) => {
   }, [entered])
 
   const selectProject = (index) => {
-    if (!galleryReady || index < 0 || index >= galleryProjects.length || index === activeProject) return
-    setActiveProject(index)
+    if (!galleryReady || transitionTarget !== null || index < 0 || index >= galleryProjects.length || index === activeProject) return
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      setActiveProject(index)
+    } else {
+      setTransitionTarget(index)
+    }
     setArtworkHovered(false)
     setArtworkFocused(false)
   }
-
-  const projectLink = project.link.startsWith('https://')
-    ? project.link : import.meta.env.BASE_URL + project.link
 
   return (
     <section className="hero" ref={heroRef}>
@@ -554,13 +556,33 @@ const Hero = ({ entered }) => {
               suppressClickRef.current = false
             }
           }}>
-          <div className="gallery-slide" key={project.number}
-            style={{ animationPlayState: !galleryReady || storyOpen || autoPaused || artworkHovered || artworkFocused ? 'paused' : 'running' }}
+          {[0, 1].map((offset) => {
+            const manual = transitionTarget !== null
+            const project = galleryProjects[offset === 0 ? activeProject : (transitionTarget ?? (activeProject + 1) % galleryProjects.length)]
+            const projectLink = project.link.startsWith('https://')
+              ? project.link : import.meta.env.BASE_URL + project.link
+            return <div className={`gallery-slide${offset ? ' gallery-slide--incoming' : ''}${manual ? ' gallery-slide--manual' : ''}${manual && transitionTarget < activeProject ? ' gallery-slide--reverse' : ''}`}
+            key={`${activeProject}-${transitionTarget}-${offset}`}
+            inert={offset === 1}
+            aria-hidden={offset === 1 ? true : undefined}
+            style={{ animationPlayState: !galleryReady || storyOpen || (!manual && (autoPaused || artworkHovered || artworkFocused)) ? 'paused' : 'running' }}
             onAnimationEnd={(event) => {
-              if (event.target === event.currentTarget && event.animationName === 'gallery-drift') {
-                setActiveProject((index) => (index + 1) % galleryProjects.length)
+              if (offset === 0 && event.target === event.currentTarget) {
+                setActiveProject((index) => transitionTarget ?? (index + 1) % galleryProjects.length)
+                setTransitionTarget(null)
               }
             }}>
+            <div className="gallery-lighting" aria-hidden="true">
+              <div className="gallery-lighting__rail" />
+              <div className="gallery-spotlight gallery-spotlight--left">
+                <span className="gallery-spotlight__beam" />
+                <span className="gallery-spotlight__head" />
+              </div>
+              <div className="gallery-spotlight gallery-spotlight--right">
+                <span className="gallery-spotlight__beam" />
+                <span className="gallery-spotlight__head" />
+              </div>
+            </div>
 
             <div className="gallery-wires" aria-hidden="true">
               <span className="gallery-wire" />
@@ -608,6 +630,7 @@ const Hero = ({ entered }) => {
             </div>
 
           </div>
+          })}
 
         </div>
 
