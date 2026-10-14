@@ -35,9 +35,9 @@ const ProjectStory = ({ project, onClose }) => {
         </p>
         <dl className="project-story__details">
           <div><dt>담당 역할</dt><dd>{project.role}</dd></div>
+          <div><dt>제작 기간</dt><dd>{project.duration}</dd></div>
           <div><dt>기여도</dt><dd>100% · {project.workType}</dd></div>
-          <div><dt>사용 도구</dt><dd>{project.tools}</dd></div>
-          {project.ai && <div><dt>AI 도구</dt><dd>{project.ai}</dd></div>}
+          <div><dt>사용 도구</dt><dd>{[project.tools, project.ai].filter(Boolean).join(' · ')}</dd></div>
         </dl>
         <a
           className="project-story__link"

@@ -1,6 +1,7 @@
 export const galleryProjects = [
   {
     "number": "01",
+    "duration": "1개월",
     "title": "YP FOODS",
     "desc": "RESPONSIVE WEB DESIGN & PUBLISHING",
     "summary": "기존 기업 웹사이트를 새로운 레이아웃과 높은가독성으로 디자인하고,메인 홈과 브랜드·제품, OEM 서브페이지를 반응형 웹으로 구현한 리디자인 프로젝트입니다.",
@@ -21,6 +22,7 @@ export const galleryProjects = [
   },
   {
     "number": "02",
+    "duration": "1주",
     "title": "AESOP",
     "desc": "RESPONSIVE CLONE CODING",
     "summary": "이솝의 기존 웹사이트를 바탕으로 메인 홈 화면을 구현한 반응형 클론 코딩 프로젝트입니다.",
@@ -40,6 +42,7 @@ export const galleryProjects = [
   },
   {
     "number": "03",
+    "duration": "3일 이내",
     "title": "대한민국 축제 대시보드",
     "desc": "VIBE CODING · FESTIVAL DASHBOARD",
     "summary": "대한민국 축제를 주제로 제작한 바이브 코딩 대시보드 프로젝트입니다.",
@@ -60,6 +63,7 @@ export const galleryProjects = [
   },
   {
     "number": "04",
+    "duration": "3일 이내",
     "title": "오늘 뭐먹지?",
     "desc": "VIBE CODING · REACT MEAL RECOMMENDATION",
     "summary": "사용자가 선택한 조건을 바탕으로 오늘의 메뉴를 추천하는 바이브코딩 웹 사이트입니다.",
@@ -79,6 +83,7 @@ export const galleryProjects = [
   },
   {
     "number": "05",
+    "duration": "약 1개월",
     "title": "숲나들e",
     "desc": "UX/UI APP REDESIGN",
     "summary": "기존 숲나들e 앱을 대상으로 사용자의 니즈에 따라 화면을 새롭게 디자인한 UX/UI 리디자인 프로젝트입니다.",
@@ -98,6 +103,7 @@ export const galleryProjects = [
   },
   {
     "number": "06",
+    "duration": "약 1개월",
     "title": "방과후ON",
     "desc": "UX/UI APP DESIGN",
     "summary": "방과후ON이라는 방과후 자녀의 학원관리 서비스에 대한 새로운 앱의 화면을 디자인한 창작 UX/UI 프로젝트입니다.",
@@ -117,6 +123,7 @@ export const galleryProjects = [
   },
   {
     "number": "07",
+    "duration": "2주",
     "title": "그레인온 카무트효소",
     "desc": "PRODUCT DETAIL PAGE",
     "summary": "그레인온 카무트효소의 기존 상품 상세페이지를 새롭게 디자인한 프로젝트입니다.",
@@ -136,6 +143,7 @@ export const galleryProjects = [
   },
   {
     "number": "08",
+    "duration": "2주",
     "title": "일룸 아코 소파",
     "desc": "PRODUCT DETAIL PAGE",
     "summary": "일룸 아코 소파의 기존 상품 상세페이지를 새롭게 디자인한 프로젝트입니다.",
@@ -156,6 +164,7 @@ export const galleryProjects = [
   },
   {
     "number": "09",
+    "duration": "1주",
     "workType": "Client Work",
     "title": "네트워킹 DAY",
     "desc": "㈜클라인 외주작업 · POSTER & BANNER DESIGN",
