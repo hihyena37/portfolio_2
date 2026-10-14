@@ -16,7 +16,7 @@ export const galleryProjects = [
     "caption": "RESPONSIVE WEB DESIGN & PUBLISHING",
     "workType": "개인 프로젝트",
     "viewLabel": "작업 사이트 보기",
-    "preview": "previews/project1.jpg",
+    "preview": "previews/project1.webp",
     "previewMobile": "previews/project1-1.webp"
   },
   {

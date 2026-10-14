@@ -11,7 +11,8 @@ import './Hero.css'
 
 const CONTACT_EMAIL = 'hihyena37@gmail.com'
 // Scroll timeline time when the gallery room fades in after the door opens.
-const GALLERY_VISIBLE_TIME = 2.55
+const GALLERY_VISIBLE_TIME = 2.5
+const GALLERY_READY_TIME = GALLERY_VISIBLE_TIME + 0.34
 
 gsap.registerPlugin(ScrollTrigger, MotionPathPlugin)
 
@@ -200,7 +201,7 @@ const Hero = ({ entered, onBackToStart }) => {
           // Refresh temporarily rewinds the timeline while measuring the layout.
           // Only publish the settled state, otherwise React can leave the gallery inert.
           if (!ScrollTrigger.isRefreshing && !resizing) {
-            galleryActive = this.time() >= 4.09
+            galleryActive = this.time() >= GALLERY_READY_TIME
             setGalleryReady(galleryActive)
             setGalleryVisible(this.time() >= GALLERY_VISIBLE_TIME)
           }
@@ -208,9 +209,9 @@ const Hero = ({ entered, onBackToStart }) => {
         scrollTrigger: {
           trigger: heroRef.current,
           start: 'top top',
-          end: '+=3000',
+          end: () => '+=' + Math.max(900, Math.min(1600, window.innerHeight * 1.5)),
           pin: true,
-          scrub: 1,
+          scrub: 0.35,
           anticipatePin: 1,
           invalidateOnRefresh: true,
           onRefresh: (self) => {
@@ -222,7 +223,7 @@ const Hero = ({ entered, onBackToStart }) => {
               self.animation.totalProgress(savedProgress)
             } else {
               self.animation.totalProgress(self.progress)
-              galleryActive = self.animation.time() >= 4.09
+              galleryActive = self.animation.time() >= GALLERY_READY_TIME
               setGalleryReady(galleryActive)
               setGalleryVisible(self.animation.time() >= GALLERY_VISIBLE_TIME)
             }
@@ -401,53 +402,6 @@ const Hero = ({ entered, onBackToStart }) => {
           },
           GALLERY_VISIBLE_TIME
         )
-
-        // 디지털 스크린이 부드럽게 나타남
-        .fromTo(
-          frameRef.current,
-          {
-            y: () => -window.innerHeight * 1.3,
-            rotation: -5,
-          },
-          {
-            y: 0,
-            rotation: 2,
-            duration: 0.75,
-            ease: 'back.out(1.4)',
-          },
-          2.85
-        )
-
-        // 내려온 뒤 작은 좌우 흔들림
-        .to(
-          frameRef.current,
-          {
-            rotation: 0,
-            duration: 0.16,
-            ease: 'sine.inOut',
-          },
-          3.6
-        )
-        .to(
-          frameRef.current,
-          {
-            rotation: 0,
-            duration: 0.14,
-            ease: 'sine.inOut',
-          },
-          3.76
-        )
-        .to(
-          frameRef.current,
-          {
-            rotation: 0,
-            duration: 0.2,
-            ease: 'sine.out',
-          },
-          3.9
-        )
-
-        .to({}, { duration: 0.3 })
 
       ScrollTrigger.refresh()
     }

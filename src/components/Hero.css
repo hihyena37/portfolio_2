@@ -1096,7 +1096,21 @@
 .gallery-scene--spotlit .gallery-story-button,
 .gallery-scene--spotlit .gallery-header-actions button { border-color: #cec1ad; }
 @media (hover: none) {
-  .gallery-scene--holding::before { opacity: 0.5; }
+  .gallery-scene:not(.gallery-scene--ending)::before { opacity: 0.55; }
+  .gallery-scene:not(.gallery-scene--ending) .gallery-scene__header,
+  .gallery-scene:not(.gallery-scene--ending) .gallery-caption,
+  .gallery-scene:not(.gallery-scene--ending) .gallery-caption__number,
+  .gallery-scene:not(.gallery-scene--ending) .gallery-caption p,
+  .gallery-scene:not(.gallery-scene--ending) .gallery-navigation,
+  .gallery-scene:not(.gallery-scene--ending) .gallery-navigation button,
+  .gallery-scene:not(.gallery-scene--ending) .gallery-story-button,
+  .gallery-scene:not(.gallery-scene--ending) .gallery-header-actions button {
+    color: #fff8ec;
+  }
+  .gallery-scene:not(.gallery-scene--ending) .gallery-story-button,
+  .gallery-scene:not(.gallery-scene--ending) .gallery-header-actions button {
+    border-color: #cec1ad;
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .gallery-scene::before { transition: none; }
