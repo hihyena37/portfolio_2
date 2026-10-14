@@ -673,7 +673,7 @@ const Hero = ({ entered, onBackToStart }) => {
             inert={offset === 1}
             aria-hidden={offset === 1 ? true : undefined}
             style={{
-              animationPlayState: !galleryReady || storyOpen || aboutOpen || (!manual && (artworkHovered || artworkFocused || dragging)) ? 'paused' : 'running',
+              animationPlayState: !galleryReady || storyOpen || aboutOpen || (!manual && (artworkFocused || dragging)) ? 'paused' : 'running',
               '--manual-duration': transitionDestination !== null ? '350ms' : '1.2s',
             }}
             onAnimationStart={(event) => {
