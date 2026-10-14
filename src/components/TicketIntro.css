@@ -62,6 +62,7 @@
 }
 
 .ticket-stub {
+  overflow: hidden;
   width: clamp(110px, 14vw, 140px);
   background: linear-gradient(180deg, #7b5cff 0%, #6d4dff 100%);
   border-left: 2px dashed rgba(255, 255, 255, 0.5);
@@ -158,9 +159,10 @@
   width: 100%;
   height: 100%;
   padding: 20px 14px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  justify-items: center;
+  gap: 14px;
   align-items: center;
 }
 
@@ -178,6 +180,8 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  height: 100%;
+  min-height: 0;
 }
 
 .stub-bars span {
@@ -187,6 +191,9 @@
   border-radius: 2px;
   background: #ffffff;
   opacity: 0.92;
+  flex: 1;
+  min-height: 0;
+  max-height: 18px;
 }
 
 .enter-label {
@@ -231,6 +238,7 @@
     border-left: none;
     border-top: 2px dashed rgba(255, 255, 255, 0.45);
     border-radius: 0 0 24px 24px;
+    overflow: hidden;
   }
 
   .ticket-cut {
@@ -249,7 +257,10 @@
   }
 
   .ticket-stub__inner {
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: auto;
+    gap: 16px;
     padding: 16px 20px;
   }
 
@@ -259,6 +270,18 @@
 
   .stub-bars {
     flex-direction: row;
+    height: 18px;
+    justify-self: end;
+    width: 100%;
+    max-width: 134px;
+    min-width: 0;
+    gap: clamp(3px, 1.2vw, 6px);
+  }
+
+  .stub-bars span {
+    flex: 1;
+    min-width: 0;
+    max-width: 8px;
   }
 
   .ticket-shadow {

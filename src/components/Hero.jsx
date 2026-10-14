@@ -26,7 +26,6 @@ const Hero = ({ entered, onBackToStart }) => {
   const endingTitleRef = useRef(null)
   const [galleryReady, setGalleryReady] = useState(false)
   const [galleryVisible, setGalleryVisible] = useState(false)
-  const [autoPaused, setAutoPaused] = useState(false)
   const [artworkHovered, setArtworkHovered] = useState(false)
   const [artworkFocused, setArtworkFocused] = useState(false)
   const [artworkHolding, setArtworkHolding] = useState(false)
@@ -334,6 +333,7 @@ const Hero = ({ entered, onBackToStart }) => {
         .to(
           doorRef.current,
           {
+            force3D: false,
             scale: () => {
               const frame = doorRef.current.querySelector(
                 '.hero-door__frame'
@@ -374,7 +374,8 @@ const Hero = ({ entered, onBackToStart }) => {
         .to(
           doorLeftRef.current,
           {
-            xPercent: -105,
+            rotationY: -100,
+            force3D: false,
             duration: 0.55,
             ease: 'power2.inOut',
           },
@@ -383,7 +384,8 @@ const Hero = ({ entered, onBackToStart }) => {
         .to(
           doorRightRef.current,
           {
-            xPercent: 105,
+            rotationY: 100,
+            force3D: false,
             duration: 0.55,
             ease: 'power2.inOut',
           },
@@ -400,7 +402,7 @@ const Hero = ({ entered, onBackToStart }) => {
           GALLERY_VISIBLE_TIME
         )
 
-        // 액자가 천장에서 내려옴
+        // 디지털 스크린이 부드럽게 나타남
         .fromTo(
           frameRef.current,
           {
@@ -420,7 +422,7 @@ const Hero = ({ entered, onBackToStart }) => {
         .to(
           frameRef.current,
           {
-            rotation: -2,
+            rotation: 0,
             duration: 0.16,
             ease: 'sine.inOut',
           },
@@ -429,7 +431,7 @@ const Hero = ({ entered, onBackToStart }) => {
         .to(
           frameRef.current,
           {
-            rotation: 1,
+            rotation: 0,
             duration: 0.14,
             ease: 'sine.inOut',
           },
@@ -528,23 +530,15 @@ const Hero = ({ entered, onBackToStart }) => {
   }, [entered])
 
   const selectProject = (index) => {
-    if (!galleryReady || index < 0 || index >= galleryProjects.length) return
-    if (transitionTarget !== null) {
-      setTransitionDestination(index)
-      return
-    }
-    if (index === activeProject) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      setActiveProject(index)
-    } else {
-      setTransitionDestination(Math.abs(index - activeProject) > 1 ? index : null)
-      setTransitionTarget(activeProject + Math.sign(index - activeProject))
-    }
+    if (!galleryReady || index < 0 || index >= galleryProjects.length || index === activeProject) return
+    setActiveProject(index)
+    setTransitionTarget(null)
+    setTransitionDestination(null)
     setArtworkHovered(false)
     setArtworkFocused(false)
   }
 
-  const navigationIndex = transitionDestination ?? transitionTarget ?? activeProject
+  const navigationIndex = activeProject
   const moveProject = (direction) => {
     if (direction > 0 && navigationIndex === galleryProjects.length - 1) {
       if (transitionTarget === null) setExhibitionEnded(true)
@@ -622,7 +616,7 @@ const Hero = ({ entered, onBackToStart }) => {
         </div>
       </div>
 
-      <div className={`gallery-scene${artworkHovered ? ' gallery-scene--spotlit' : ''}${artworkHolding && transitionTarget === null && !exhibitionEnded ? ' gallery-scene--holding' : ''}`} ref={galleryRef} inert={!galleryReady && !exhibitionEnded}
+      <div className={`gallery-scene${exhibitionEnded ? ' gallery-scene--ending' : ''}${artworkHovered ? ' gallery-scene--spotlit' : ''}${artworkHolding && transitionTarget === null && !exhibitionEnded ? ' gallery-scene--holding' : ''}`} ref={galleryRef} inert={!galleryReady && !exhibitionEnded}
         role="region" aria-label="작품 전시 슬라이드"
         onKeyDown={(event) => {
           if (exhibitionEnded) return
@@ -700,7 +694,21 @@ const Hero = ({ entered, onBackToStart }) => {
               suppressClickRef.current = false
             }
           }}>
-          {[0, 1].map((offset) => {
+          {[-1, 1].map((direction) => {
+            const index = activeProject + direction
+            const neighbor = galleryProjects[index]
+            if (!neighbor || exhibitionEnded) return null
+            return <button type="button" key={`peek-${direction}`}
+              className={`gallery-peek gallery-peek--${direction < 0 ? 'previous' : 'next'}`}
+              aria-label={`${neighbor.name} 작품으로 이동`}
+              onClick={() => selectProject(index)}>
+              <picture>
+                {neighbor.previewMobile && <source media="(max-width: 767px)" srcSet={`${import.meta.env.BASE_URL}${neighbor.previewMobile}`} />}
+                <img src={`${import.meta.env.BASE_URL}${neighbor.preview}`} alt="" decoding="async" />
+              </picture>
+            </button>
+          })}
+          {[0].map((offset) => {
             if (exhibitionEnded || (offset === 1 && transitionTarget === null && activeProject === galleryProjects.length - 1)) return null
             const manual = transitionTarget !== null
             const project = galleryProjects[offset === 0 ? activeProject : (transitionTarget ?? (activeProject + 1) % galleryProjects.length)]
@@ -711,47 +719,18 @@ const Hero = ({ entered, onBackToStart }) => {
             inert={offset === 1}
             aria-hidden={offset === 1 ? true : undefined}
             style={{
-              animationPlayState: !galleryReady || storyOpen || aboutOpen || (!manual && (autoPaused || artworkHovered || artworkFocused || dragging)) ? 'paused' : 'running',
+              animationPlayState: !galleryReady || storyOpen || aboutOpen || (!manual && (artworkHovered || artworkFocused || dragging)) ? 'paused' : 'running',
               '--manual-duration': transitionDestination !== null ? '350ms' : '1.2s',
             }}
             onAnimationStart={(event) => {
               if (offset === 0 && event.target === event.currentTarget && event.animationName === 'gallery-hold') setArtworkHolding(true)
             }}
             onAnimationEnd={(event) => {
-              if (event.animationName === 'gallery-hold') {
-                if (offset === 0 && event.target === event.currentTarget) setArtworkHolding(false)
-                return
-              }
-              if (offset === 0 && event.target === event.currentTarget) {
-                if (transitionTarget !== null && transitionDestination !== null && transitionTarget !== transitionDestination) {
-                  setActiveProject(transitionTarget)
-                  setTransitionTarget(transitionTarget + Math.sign(transitionDestination - transitionTarget))
-                  return
-                }
-                if (transitionTarget === null && activeProject === galleryProjects.length - 1) {
-                  setExhibitionEnded(true)
-                } else {
-                  setActiveProject((index) => transitionTarget ?? index + 1)
-                }
-                setTransitionTarget(null)
-                setTransitionDestination(null)
-              }
+              if (event.target !== event.currentTarget || event.animationName !== 'gallery-hold') return
+              setArtworkHolding(false)
+              if (activeProject === galleryProjects.length - 1) setExhibitionEnded(true)
+              else setActiveProject((index) => index + 1)
             }}>
-            <div className="gallery-lighting" aria-hidden="true">
-              <div className="gallery-lighting__rail" />
-              {['left', 'right'].map((side) => (
-                <div className={`gallery-spotlight gallery-spotlight--${side}`} key={side}>
-                  <span className="gallery-spotlight__beam" />
-                  <span className="gallery-spotlight__head" />
-                </div>
-              ))}
-            </div>
-
-            <div className="gallery-wires" aria-hidden="true">
-              <span className="gallery-wire" />
-              <span className="gallery-wire" />
-            </div>
-
             <a
               className="gallery-artwork"
               onPointerEnter={(event) => {
@@ -822,13 +801,6 @@ const Hero = ({ entered, onBackToStart }) => {
                 onClick={() => selectProject(index)} />
             ))}
           </div>
-          <span className="gallery-navigation__name">{project.name}</span>
-          <button className="gallery-autoplay-button" type="button"
-            aria-label={autoPaused ? '작품 자동 넘기기 재생' : '작품 자동 넘기기 일시정지'}
-            aria-pressed={autoPaused} onClick={() => setAutoPaused(!autoPaused)}>
-            <span aria-hidden="true">{autoPaused ? '▶' : 'Ⅱ'}</span>
-            <span className="gallery-autoplay-label">{autoPaused ? '재생' : '일시정지'}</span>
-          </button>
         </nav>
 
         {exhibitionEnded && (
