@@ -331,6 +331,8 @@
 }
 
 .gallery-hanging {
+  translate: var(--drag-offset, 0px) 0;
+  transition: translate 180ms ease-out;
   z-index: 1;
   --gallery-slide-gap: clamp(16px, 2vw, 32px);
   display: grid;
@@ -678,6 +680,7 @@
   animation: gallery-manual-out var(--manual-duration, 1.2s) ease-in-out both;
 }
 
+.gallery-hanging--dragging { transition: none; }
 .gallery-hanging--dragging .gallery-artwork { cursor: grabbing; }
 
 .gallery-slide--manual.gallery-slide--incoming {
@@ -763,20 +766,22 @@
   border-color: #7965b0;
 }
 
-.gallery-navigation__positions button:hover {
-  border-color: #b9afa3;
-}
-
-.gallery-navigation__positions button[aria-current='true']:hover {
-  border-color: #aa98d3;
-}
-
 .gallery-scene--spotlit .gallery-navigation__positions button:not([aria-current='true']) {
   border-color: #d4cbc0;
 }
 
-.gallery-scene--spotlit .gallery-navigation__positions button:not([aria-current='true']):hover {
-  border-color: #eee7dd;
+@media (hover: hover) and (pointer: fine) {
+  .gallery-navigation__positions button:hover {
+    border-color: #b9afa3;
+  }
+
+  .gallery-navigation__positions button[aria-current='true']:hover {
+    border-color: #aa98d3;
+  }
+
+  .gallery-scene--spotlit .gallery-navigation__positions button:not([aria-current='true']):hover {
+    border-color: #eee7dd;
+  }
 }
 
 .gallery-navigation button:focus-visible {

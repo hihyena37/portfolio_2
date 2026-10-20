@@ -23,6 +23,7 @@ const Hero = ({ entered, onBackToStart }) => {
   const [transitionTarget, setTransitionTarget] = useState(null)
   const [transitionDestination, setTransitionDestination] = useState(null)
   const [dragging, setDragging] = useState(false)
+  const [dragOffset, setDragOffset] = useState(0)
   const [exhibitionEnded, setExhibitionEnded] = useState(false)
   const endingTitleRef = useRef(null)
   const [galleryReady, setGalleryReady] = useState(false)
@@ -601,7 +602,7 @@ const Hero = ({ entered, onBackToStart }) => {
         </div>
 
         <div className={`gallery-hanging${dragging ? ' gallery-hanging--dragging' : ''}`} ref={frameRef}
-          style={exhibitionEnded ? { display: 'none' } : undefined}
+          style={{ display: exhibitionEnded ? 'none' : undefined, '--drag-offset': `${dragOffset}px` }}
           // Only keyboard focus pauses the drift; the replay button's programmatic focus must not.
           onFocusCapture={(event) => setArtworkFocused(event.target.matches(':focus-visible'))}
           onBlurCapture={(event) => {
@@ -609,37 +610,44 @@ const Hero = ({ entered, onBackToStart }) => {
           }}
           onPointerDown={(event) => {
             suppressClickRef.current = false
-            if (!event.isPrimary || event.button !== 0 || event.target.closest('button') || transitionTarget !== null) return
+            if (!event.isPrimary || (event.pointerType === 'mouse' && event.button !== 0) || event.target.closest('button:not(.gallery-peek)') || transitionTarget !== null) return
             swipeRef.current = {
               x: event.clientX,
               y: event.clientY,
               target: event.target.closest('a') ?? event.currentTarget,
+              pointerId: event.pointerId,
+              horizontal: false,
             }
             // Hold the artwork under the finger until the tap or swipe finishes.
             setDragging(true)
           }}
           onPointerMove={(event) => {
             const start = swipeRef.current
-            if (!start) return
-            if (Math.abs(event.clientX - start.x) > 50 && Math.abs(event.clientX - start.x) > Math.abs(event.clientY - start.y) * 1.3) {
+            if (!start || start.pointerId !== event.pointerId) return
+            const dx = event.clientX - start.x
+            const dy = event.clientY - start.y
+            if (!start.horizontal && Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+              start.horizontal = true
               suppressClickRef.current = true
               start.target.setPointerCapture(event.pointerId)
             }
+            if (start.horizontal) setDragOffset(Math.max(-100, Math.min(100, dx * 0.6)))
           }}
           onPointerUp={(event) => {
             const start = swipeRef.current
             swipeRef.current = null
             setDragging(false)
+            setDragOffset(0)
             if (!start) return
             const dx = event.clientX - start.x
             const dy = event.clientY - start.y
-            if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+            if (start.horizontal && Math.abs(dx) > 32 && Math.abs(dx) > Math.abs(dy) * 1.3) {
               suppressClickRef.current = true
               selectProject(activeProject + (dx < 0 ? 1 : -1))
             }
           }}
-          onPointerCancel={() => { swipeRef.current = null; setDragging(false); suppressClickRef.current = true }}
-          onLostPointerCapture={() => { swipeRef.current = null; setDragging(false) }}
+          onPointerCancel={() => { swipeRef.current = null; setDragging(false); setDragOffset(0); suppressClickRef.current = true }}
+          onLostPointerCapture={() => { swipeRef.current = null; setDragging(false); setDragOffset(0) }}
           onDragStart={(event) => event.preventDefault()}
           onClickCapture={(event) => {
             if (suppressClickRef.current) {
