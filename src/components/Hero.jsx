@@ -629,7 +629,9 @@ const Hero = ({ entered, onBackToStart }) => {
             if (!start.horizontal && Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy) * 1.3) {
               start.horizontal = true
               suppressClickRef.current = true
-              start.target.setPointerCapture(event.pointerId)
+              // Touch already captures the original image. Moving that capture to
+              // its link fires lostpointercapture and can cancel the swipe midway.
+              if (event.pointerType === 'mouse') start.target.setPointerCapture(event.pointerId)
             }
             if (start.horizontal) setDragOffset(Math.max(-100, Math.min(100, dx * 0.6)))
           }}
@@ -647,7 +649,6 @@ const Hero = ({ entered, onBackToStart }) => {
             }
           }}
           onPointerCancel={() => { swipeRef.current = null; setDragging(false); setDragOffset(0); suppressClickRef.current = true }}
-          onLostPointerCapture={() => { swipeRef.current = null; setDragging(false); setDragOffset(0) }}
           onDragStart={(event) => event.preventDefault()}
           onClickCapture={(event) => {
             if (suppressClickRef.current) {
